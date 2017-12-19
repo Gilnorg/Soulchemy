@@ -52,7 +52,15 @@ public class InventoryButton : MonoBehaviour {
                     }
                 }
             }
-        }        
+            else
+            {
+                if (gc.currentItem != null)
+                {
+                    gc.GiveItem(slot, gc.currentItem);
+                    gc.currentBattle.NullCurrentAttackPreview();
+                }
+            }
+        }
     }
 
     public void Set()

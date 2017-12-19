@@ -6078,7 +6078,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72bc86b3a16ca0740ad762bc686b8823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cheatInfiniteItems: 1
+  cheatInfiniteItems: 0
   cheatInvincible: 0
   mainCanvas: {fileID: 327460421}
   battleUnits: {fileID: 2015610705}
