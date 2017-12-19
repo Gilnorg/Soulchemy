@@ -6,85 +6,149 @@ public class BigTileHandler : MonoBehaviour {
 
     GameController gc;
 
+    public float tileWidth, walkSpeed;
+
+    public enum Axis { x, y }
+    public Axis currentAxis;
+
+    public int dir = 1;
+
     public bool triggered, moving;
-    public float tileWidth, walkSpd;
 
-    public List<GameObject> bigTilePrefs;
+    public List<GameObject> bigTilePref = new List<GameObject>();
 
-    private int dir = 1;
-    private bool axis;
+    List<List<BigTile>> bigMap = new List<List<BigTile>>();
 
-    private Vector3 targetPos;
+    private class BigTile
+    {
+        public IntVector2 coords;
+        public GameObject gameObject;
+        public Transform transform;
 
-    private List<List<GameObject>> bigMap = new List<List<GameObject>>();
+        public BigTile(int x, int y, GameObject newGameObject)
+        {
+            coords = new IntVector2(x, y);
+            gameObject = newGameObject;
+            transform = gameObject.transform;
+        }
 
-    // Use this for initialization
+        public void SetActive(bool active)
+        {
+            gameObject.SetActive(active);
+        }
+    }
+
     private void Awake()
     {
         gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
     }
 
-    void Start ()
+    private void Start()
     {
-        foreach (List<Tile> x in gc.currentMap.map)
+        // add a BigTile GameObject to bigMap for each tile in gc.currentMap
+        for (int x = 0; x < gc.currentMap.width; x++)
         {
-            bigMap.Add(new List<GameObject>());
-            foreach (Tile y in x)
+            bigMap.Add(new List<BigTile>());
+            for (int y = 0; y < gc.currentMap.height; y++)
             {
-                if (y.type != TileType.none)
+                if (gc.currentMap.GetTile(x, y).type == TileType.none)
                 {
-                    bigMap[bigMap.Count - 1].Add(Instantiate(bigTilePrefs[0], transform));
+                    bigMap[x].Add(null);
                 }
                 else
                 {
-                    bigMap[bigMap.Count - 1].Add(null);
-                }
-            }
-        }
-
-        Invoke("GetBigTiles", 0);
-	}
-
-    void GetBigTiles()
-    {
-        for (int x = 0; x < bigMap.Count; x++)
-        {
-            for (int y = 0; y < bigMap[0].Count; y++)
-            {
-                if (bigMap[x][y] != null)
-                {
-                    bigMap[x][y].GetComponent<BigTile>().coords = new IntVector2(x, y);
-
+                    bigMap[x].Add(new BigTile(x, y, Instantiate(bigTilePref[Random.Range(0, bigTilePref.Count)], transform)));
                     bigMap[x][y].SetActive(false);
                 }
             }
         }
 
-        SwitchAxis(true, false);
-
+        SetAxis(Axis.x);
     }
 
-    // Update is called once per frame
-    void Update() {
+    // swap axis between vertical and horizontal
+    private void ToggleAxis()
+    {
+        if (currentAxis == Axis.x) SetAxis(Axis.y);
+        else SetAxis(Axis.x);
+    }
 
-        BigTile activeChild = CheckChildren();
+    private void SetAxis(Axis newAxis)
+    {
+        triggered = false;
 
-        if (!triggered) { 
-            if (activeChild != null)
+        currentAxis = newAxis;
+
+        var x = gc.currentMap.coords.x;
+        var y = gc.currentMap.coords.y;
+
+        if (currentAxis == Axis.x)
+        {
+            foreach (List<BigTile> column in bigMap)
             {
-                triggered = true;
-                targetPos = transform.position - activeChild.transform.position;
-                targetPos.y = transform.position.y;
-
-                Debug.Log("---");
-                gc.currentMap.SetCoords(activeChild.coords);
-
-                moving = false;
+                if (column[y] != null)
+                {
+                    ActivateBigTile(column[y], column[y].coords.y);
+                }
             }
         }
         else
         {
-            if (activeChild == null)
+            foreach (BigTile row in bigMap[gc.currentMap.coords.x])
+            {
+                if (row != null)
+                {
+                    ActivateBigTile(row, row.coords.x);
+                }
+            }
+        }
+
+    }
+
+    void ActivateBigTile(BigTile bigTile, int pos)
+    {
+        bigTile.SetActive(true);
+        bigTile.gameObject.transform.position = new Vector3(transform.position.x - pos * tileWidth, 0);
+
+        if (bigTile.coords == gc.currentMap.coords)
+        {
+            transform.position -= bigTile.transform.position;
+        }
+    }
+
+
+    private void Update()
+    {
+        BigTile activeTile = null;
+
+        foreach (List<BigTile> column in bigMap)
+        {
+            foreach (BigTile row in column)
+            {
+                if (row != null
+                    && row.transform.position.x >= -gc.center
+                    && row.transform.position.x <= gc.center)
+                {
+                    activeTile = row;
+                }
+            }
+        }
+
+        if (!triggered)
+        {
+            if (activeTile != null)
+            {
+                triggered = true;
+
+                gc.currentMap.SetCoords(activeTile.coords);
+
+                transform.position = activeTile.transform.position;
+                transform.position = new Vector3(transform.position.x, 1);
+            }
+        }
+        else
+        {
+            if (activeTile == null)
             {
                 triggered = false;
             }
@@ -92,173 +156,54 @@ public class BigTileHandler : MonoBehaviour {
 
         if (moving)
         {
-            transform.position += Vector3.left * walkSpd * dir * Time.deltaTime;
-        }
-        else if (activeChild != null)
-        { 
-            transform.position = Vector3.MoveTowards(transform.position, targetPos, 10 * Time.deltaTime);
-        }
-
-	}
-
-    private BigTile CheckChildren()
-    {
-        // check coords of all child BigTiles
-        foreach (Transform child in transform)
-        {
-            if (child.gameObject.activeSelf)
-            {
-                Vector3 worldPos = child.transform.position;
-
-                if (worldPos.x >= -gc.center && worldPos.x <= gc.center)
-                {
-                    return child.GetComponent<BigTile>();
-                }
-            }
-        }
-
-        // if no matching child is found...
-        return null;
-    }
-
-    public void SwitchAxis() { SwitchAxis(!axis); }
-    public void SwitchAxis(bool newAxis, bool changePos = true)
-    {
-        axis = newAxis;
-
-        int x = gc.currentMap.coords.x;
-        int y = gc.currentMap.coords.y;
-
-        foreach(Transform child in transform)
-        {
-            child.gameObject.SetActive(false);
-        }
-
-        if (axis) // switching to the vertical axis
-        {
-            if (changePos)
-            {
-                gc.currentMap.SetCoords(gc.currentMap.coords + IntVector2.up * dir);
-            }
-
-            for (int y2 = 0; y2 < gc.currentMap.width; y2++)
-            {
-                if (bigMap[x][y2] != null)
-                {
-                    bigMap[x][y2].SetActive(true);
-                    bigMap[x][y2].transform.position = transform.position + new Vector3(y2, 0) * tileWidth * 2;
-
-                    if (bigMap[x][y2].GetComponent<BigTile>().coords == gc.currentMap.coords)
-                    {
-                        transform.position -= bigMap[x][y2].transform.position;
-                        transform.position = new Vector3(transform.position.x, 1, 0);
-                    }
-                }
-            }
-        }
-        else // switching to the horizontal axis
-        {
-            if (changePos)
-            {
-                gc.currentMap.SetCoords(gc.currentMap.coords + IntVector2.right * dir);
-            }
-
-            for (int x2 = 0; x2 < gc.currentMap.width; x2++)
-            {
-                if (bigMap[x2][y] != null)
-                {
-                    bigMap[x2][y].SetActive(true);
-                    bigMap[x2][y].transform.position = transform.position + new Vector3(x2, 0) * tileWidth * 2;
-
-                    if (bigMap[x2][y].GetComponent<BigTile>().coords == gc.currentMap.coords)
-                    {
-                        transform.position -= bigMap[x2][y].transform.position;
-                        transform.position = new Vector3(transform.position.x, 1, 0);
-                    }
-                }
-            }
-        }
-        
-        moving = false;
-    }
-
-    // Move along horizontal axis
-    public void MoveRight()
-    {
-        IntVector2 coords = gc.currentMap.coords;
-        if (coords.x < gc.currentMap.width - 1 && gc.currentMap.GetTile(coords + IntVector2.right).type != TileType.none)
-        {
-            if (axis)
-            {
-                dir = 1;
-
-                gc.FadeOut(SwitchAxis);
-            }
-            else
-            {
-                dir = 1;
-
-                moving = true;
-            }
-        }
-    }
-    public void MoveLeft()
-    {
-        IntVector2 coords = gc.currentMap.coords;
-        if (coords.x > 0 && gc.currentMap.GetTile(coords + IntVector2.left).type != TileType.none)
-        {
-            if (axis)
-            {
-                dir = -1;
-
-                gc.FadeOut(SwitchAxis);
-            }
-            else
-            {
-                dir = -1;
-
-                moving = true;
-            }
+            transform.position += Vector3.left * dir * walkSpeed * Time.deltaTime;
         }
     }
 
-    // Move along vertical axis
+
+    // Move Functions
     public void MoveUp()
     {
-        IntVector2 coords = gc.currentMap.coords;
-        if (coords.y < gc.currentMap.height - 1 && gc.currentMap.GetTile(coords + IntVector2.up).type != TileType.none)
+        dir = 1;
+
+        if (currentAxis == Axis.x)
         {
-            if (!axis)
-            {
-                dir = 1;
-
-                gc.FadeOut(SwitchAxis);
-            }
-            else
-            {
-                dir = 1;
-
-                moving = true;
-            }
+            gc.currentMap.SetCoords(gc.currentMap.coords + IntVector2.up, false);
+            gc.FadeOut(ToggleAxis);
         }
     }
+
     public void MoveDown()
     {
-        IntVector2 coords = gc.currentMap.coords;
-        if (coords.y > 0 && gc.currentMap.GetTile(coords + IntVector2.down).type != TileType.none)
+        dir = -1;
+
+        if (currentAxis == Axis.x)
         {
-            if (!axis)
-            {
-                dir = -1;
-
-                gc.FadeOut(SwitchAxis);
-            }
-            else
-            {
-                dir = -1;
-
-                moving = true;
-            }
+            gc.currentMap.SetCoords(gc.currentMap.coords + IntVector2.down, false);
+            gc.FadeOut(ToggleAxis);
         }
     }
+
+    public void MoveRight()
+    {
+        dir = 1;
+
+        if (currentAxis == Axis.y)
+        {
+            gc.currentMap.SetCoords(gc.currentMap.coords + IntVector2.right, false);
+            gc.FadeOut(ToggleAxis);
+        }
+    }
+
+    public void MoveLeft()
+    {
+        dir = -1;
+
+        if (currentAxis == Axis.y)
+        {
+            gc.currentMap.SetCoords(gc.currentMap.coords + IntVector2.left, false);
+            gc.FadeOut(ToggleAxis);
+        }
+    }
+
 }

@@ -31,11 +31,11 @@ public class Map {
             //generate map
             map = new List<List<Tile>>
             {
-                new List<Tile> { new Tile(), new Tile.Path(), new Tile.Battle() },
+                new List<Tile> { new Tile(), new Tile.Path(), new Tile.Path() },
 
-                new List<Tile> { new Tile(), new Tile.Start(), new Tile.Battle() },
+                new List<Tile> { new Tile(), new Tile.Start(), new Tile.Path() },
 
-                new List<Tile> { new Tile(), new Tile.Battle(), new Tile.Path() }
+                new List<Tile> { new Tile(), new Tile.Path(), new Tile.Path() }
             };
         }
         else
@@ -63,25 +63,34 @@ public class Map {
                 if (map[x][y].type == TileType.start)
                 {
                     coords = new IntVector2(x, y);
-                    Debug.Log(coords + ", " + map[1][0].type);
                     gc.mapHandler.UpdatePlayer(coords);
+                    Debug.Log(coords + ", " + map[coords.x][coords.y].type);
                     return;
                 }
             }
         }
     }
 
-    public void SetCoords(IntVector2 newCoords)
+    public void SetCoords(int x, int y, bool runFunc = true)
+    {
+        SetCoords(new IntVector2(x, y), runFunc);
+    }
+
+    public void SetCoords(IntVector2 newCoords, bool runFunc = true)
     {
         if (coords.x < width && coords.x >=0
             && coords.y < height && coords.y >= 0
             && map[coords.x][coords.y].type != TileType.none)
         {
-            Debug.Log("???");
             coords = newCoords;
             gc.mapHandler.UpdatePlayer(coords);
-            map[coords.x][coords.y].Func();
+            if (runFunc) map[coords.x][coords.y].Func();
         }
+    }
+
+    public Tile GetTile(int x, int y)
+    {
+        return map[x][y];
     }
 
     public Tile GetTile(IntVector2 _coords)
