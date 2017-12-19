@@ -22,6 +22,21 @@ public class Tile
         triggered = true;
     }
 
+    public class Test : Tile
+    {
+        public Test() : base()
+        {
+            type = TileType.other;
+            sprite = gc.itemSprites[0];
+        }
+
+        public override void Func()
+        {
+            base.Func();
+            Debug.Log("Testing...");
+        }
+    }
+
     public class Path : Tile
     {
         public Path() : base()

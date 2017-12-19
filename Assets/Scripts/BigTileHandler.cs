@@ -36,6 +36,11 @@ public class BigTileHandler : MonoBehaviour {
         {
             gameObject.SetActive(active);
         }
+
+        public bool activeSelf
+        {
+            get { return gameObject.activeSelf; }
+        }
     }
 
     private void Awake()
@@ -59,6 +64,7 @@ public class BigTileHandler : MonoBehaviour {
                 {
                     bigMap[x].Add(new BigTile(x, y, Instantiate(bigTilePref[Random.Range(0, bigTilePref.Count)], transform)));
                     bigMap[x][y].SetActive(false);
+                    bigMap[x][y].gameObject.name += "(" + x + ", " + y + ")";
                 }
             }
         }
@@ -75,6 +81,11 @@ public class BigTileHandler : MonoBehaviour {
 
     private void SetAxis(Axis newAxis)
     {
+        foreach(Transform child in transform)
+        {
+            child.gameObject.SetActive(false);
+        }
+
         triggered = false;
 
         currentAxis = newAxis;
@@ -86,19 +97,21 @@ public class BigTileHandler : MonoBehaviour {
         {
             foreach (List<BigTile> column in bigMap)
             {
-                if (column[y] != null)
+                BigTile bigTile = column[y];
+
+                if (bigTile != null)
                 {
-                    ActivateBigTile(column[y], column[y].coords.y);
+                    ActivateBigTile(bigTile, bigTile.coords.x);
                 }
             }
         }
         else
         {
-            foreach (BigTile row in bigMap[gc.currentMap.coords.x])
+            foreach (BigTile bigTile in bigMap[x])
             {
-                if (row != null)
+                if (bigTile != null)
                 {
-                    ActivateBigTile(row, row.coords.x);
+                    ActivateBigTile(bigTile, bigTile.coords.y);
                 }
             }
         }
@@ -108,7 +121,7 @@ public class BigTileHandler : MonoBehaviour {
     void ActivateBigTile(BigTile bigTile, int pos)
     {
         bigTile.SetActive(true);
-        bigTile.gameObject.transform.position = new Vector3(transform.position.x - pos * tileWidth, 0);
+        bigTile.transform.position = new Vector3(transform.position.x + pos * tileWidth, transform.position.y);
 
         if (bigTile.coords == gc.currentMap.coords)
         {
@@ -126,6 +139,7 @@ public class BigTileHandler : MonoBehaviour {
             foreach (BigTile row in column)
             {
                 if (row != null
+                    && row.activeSelf
                     && row.transform.position.x >= -gc.center
                     && row.transform.position.x <= gc.center)
                 {
@@ -139,10 +153,11 @@ public class BigTileHandler : MonoBehaviour {
             if (activeTile != null)
             {
                 triggered = true;
+                moving = false;
 
                 gc.currentMap.SetCoords(activeTile.coords);
 
-                transform.position = activeTile.transform.position;
+                transform.position -= activeTile.transform.position;
                 transform.position = new Vector3(transform.position.x, 1);
             }
         }
@@ -166,10 +181,19 @@ public class BigTileHandler : MonoBehaviour {
     {
         dir = 1;
 
-        if (currentAxis == Axis.x)
+        IntVector2 currentCoords = gc.currentMap.coords;
+
+        if (currentCoords.y < gc.currentMap.height - 1 && gc.currentMap.GetTile(currentCoords + IntVector2.up).type != TileType.none)
         {
-            gc.currentMap.SetCoords(gc.currentMap.coords + IntVector2.up, false);
-            gc.FadeOut(ToggleAxis);
+            if (currentAxis == Axis.x) // fade out, then toggle axis to vertical
+            {
+                gc.currentMap.SetCoords(gc.currentMap.coords + IntVector2.up, false);
+                gc.FadeOut(ToggleAxis);
+            }
+            else // start moving
+            {
+                moving = true;
+            }
         }
     }
 
@@ -177,10 +201,19 @@ public class BigTileHandler : MonoBehaviour {
     {
         dir = -1;
 
-        if (currentAxis == Axis.x)
+        IntVector2 currentCoords = gc.currentMap.coords;
+
+        if (currentCoords.y > 0 && gc.currentMap.GetTile(currentCoords + IntVector2.down).type != TileType.none)
         {
-            gc.currentMap.SetCoords(gc.currentMap.coords + IntVector2.down, false);
-            gc.FadeOut(ToggleAxis);
+            if (currentAxis == Axis.x) // fade out, then toggle axis to vertical
+            {
+                gc.currentMap.SetCoords(gc.currentMap.coords + IntVector2.down, false);
+                gc.FadeOut(ToggleAxis);
+            }
+            else // start moving
+            {
+                moving = true;
+            }
         }
     }
 
@@ -188,10 +221,19 @@ public class BigTileHandler : MonoBehaviour {
     {
         dir = 1;
 
-        if (currentAxis == Axis.y)
+        IntVector2 currentCoords = gc.currentMap.coords;
+
+        if (currentCoords.x < gc.currentMap.width - 1 && gc.currentMap.GetTile(currentCoords + IntVector2.right).type != TileType.none)
         {
-            gc.currentMap.SetCoords(gc.currentMap.coords + IntVector2.right, false);
-            gc.FadeOut(ToggleAxis);
+            if (currentAxis == Axis.y) // fade out, then toggle axis to horizontal
+            {
+                gc.currentMap.SetCoords(gc.currentMap.coords + IntVector2.right, false);
+                gc.FadeOut(ToggleAxis);
+            }
+            else // start moving
+            {
+                moving = true;
+            }
         }
     }
 
@@ -199,10 +241,19 @@ public class BigTileHandler : MonoBehaviour {
     {
         dir = -1;
 
-        if (currentAxis == Axis.y)
+        IntVector2 currentCoords = gc.currentMap.coords;
+
+        if (currentCoords.x > 0 && gc.currentMap.GetTile(currentCoords + IntVector2.left).type != TileType.none)
         {
-            gc.currentMap.SetCoords(gc.currentMap.coords + IntVector2.left, false);
-            gc.FadeOut(ToggleAxis);
+            if (currentAxis == Axis.y) // fade out, then toggle axis to horizontal
+            {
+                gc.currentMap.SetCoords(gc.currentMap.coords + IntVector2.left, false);
+                gc.FadeOut(ToggleAxis);
+            }
+            else // start moving
+            {
+                moving = true;
+            }
         }
     }
 
