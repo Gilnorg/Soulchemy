@@ -14,37 +14,47 @@ public class Item {
 
     public int stackSize, dmg, range, deadRange;
 
+    protected Entity target
+    {
+        get { return gc.player.currentTarget; }
+    }
+
     protected Item()
     {
         gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
     }
 
-    public virtual void Effect(Entity target, int dmg)
+    public override string ToString()
     {
-
+        return name;
     }
     
-}
-
-public class Test : Item
-{
-    public Test():
-        base()
+    public virtual void Func()
     {
-        name = "Test";
-        type = ItemType.Bomb;
-        sprite = gc.itemSprites[0];
 
-        stackSize = 15;
-        dmg = 5;
-        range = 1;
-        deadRange = 0;
     }
 
-    public override void Effect(Entity target, int dmg)
+    public class Test : Item
     {
-        base.Effect(target, dmg);
+        public Test() :
+            base()
+        {
+            name = "Test";
+            type = ItemType.Bomb;
+            sprite = gc.itemSprites[0];
 
-        target.Hurt(dmg);
+            stackSize = 15;
+            dmg = 5;
+            range = 1;
+            deadRange = 0;
+        }
+
+        public override void Func()
+        {
+            base.Func();
+
+            gc.currentBattle.SplashAttack(target.loc, dmg, gc.Attack, range, deadRange);
+        }
     }
+
 }

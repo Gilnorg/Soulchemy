@@ -18,10 +18,11 @@ public class MouseItem : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        Item item = gc.currentBattle.currentItem;
+        Item item = gc.currentItem;
+        print(item);
 		if (item != null)
         {
-            rTransform.position = Input.mousePosition;
+            rTransform.anchoredPosition = Input.mousePosition;
             if (image.sprite != item.sprite)
             {
                 image.sprite = item.sprite;
@@ -29,7 +30,7 @@ public class MouseItem : MonoBehaviour {
         }
         else
         {
-            rTransform.anchoredPosition = Vector2.up * 310;
+            rTransform.anchoredPosition = Vector2.up;
         }
 	}
 }

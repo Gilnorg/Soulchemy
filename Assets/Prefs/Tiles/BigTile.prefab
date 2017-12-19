@@ -20,7 +20,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4682569085801372}
   - component: {fileID: 212086280498252114}
-  - component: {fileID: 114986397268529260}
   m_Layer: 0
   m_Name: BigTile
   m_TagString: Untagged
@@ -41,20 +40,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114986397268529260
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1322405322941866}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5af7adb30368ff941bf47f6306352fff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  coords:
-    x: 0
-    y: 0
 --- !u!212 &212086280498252114
 SpriteRenderer:
   m_ObjectHideFlags: 1

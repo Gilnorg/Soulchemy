@@ -38,7 +38,7 @@ public class PCController : Entity {
 
     private void BasicAttack()
     {
-        print(currentTarget.name + currentTarget.id);
+        currentTarget.Hurt(atk.current, this);
     }
 
 

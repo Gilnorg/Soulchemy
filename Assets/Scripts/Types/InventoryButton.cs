@@ -10,6 +10,11 @@ public class InventoryButton : MonoBehaviour {
     private Image icon;
     private Text text;
 
+    private Item item
+    {
+        get { return gc.inventory[slot][0]; }
+    }
+
     private void Start()
     {
         gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
@@ -24,35 +29,30 @@ public class InventoryButton : MonoBehaviour {
 
     public void UseItem()
     {
-
-        if (gc.currentPlayerAttack == null)
+        if (gc.state == GameState.inBattle)
         {
             if (gc.inventory[slot] != null)
             {
-                if (gc.inventory[slot][0].type != ItemType.Ingredient && gc.currentBattle.currentItem == null)
+                if (gc.currentItem == null)
                 {
-                    gc.currentPlayerAttack = new PlayerAttack(gc.inventory[slot][0]);
+                    gc.currentBattle.SetCurrentAttack(item);
+                    gc.player.SetAttack(item.Func, "Throw");
+
                     if (!gc.cheatInfiniteItems)
                     {
                         gc.TakeItem(slot);
                     }
                 }
-                else
+                else if (gc.currentItem.name == item.name)
                 {
                     gc.currentBattle.NullCurrentAttackPreview();
+                    if (!gc.cheatInfiniteItems)
+                    {
+                        gc.GiveItem(slot, item);
+                    }
                 }
             }
-        }
-        else
-        {
-            if (gc.inventory[slot] == null ||
-                gc.inventory[slot].Count < gc.inventory[slot][0].stackSize)
-            {
-                gc.GiveItem(slot, gc.currentPlayerAttack.currentItem);
-                gc.currentBattle.NullCurrentAttackPreview();
-                gc.currentBattle.AttackPreview();
-            }
-        }
+        }        
     }
 
     public void Set()

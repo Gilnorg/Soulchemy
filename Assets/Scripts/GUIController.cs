@@ -15,16 +15,6 @@ public class GUIController : MonoBehaviour {
 
     public bool uiDisabled = false;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
     private void OnGUI()
     {
         if (gc.state == GameState.inField)

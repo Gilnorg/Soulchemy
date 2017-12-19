@@ -33,9 +33,9 @@ public class Map {
             {
                 new List<Tile> { new Tile(), new Tile.Path(), new Tile.Path() },
 
-                new List<Tile> { new Tile(), new Tile.Start(), new Tile.Path() },
+                new List<Tile> { new Tile(), new Tile.Start(), new Tile.Battle() },
 
-                new List<Tile> { new Tile(), new Tile.Path(), new Tile.Path() }
+                new List<Tile> { new Tile(), new Tile.Battle(), new Tile.Path() }
             };
         }
         else

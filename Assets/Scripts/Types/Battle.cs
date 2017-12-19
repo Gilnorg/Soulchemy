@@ -12,25 +12,6 @@ public class PlayerAttack
 
     public int range, deadRange;
 
-    public Item currentItem = null;
-
-    public PlayerAttack(Item item)
-    {
-        if (item.type == ItemType.Potion)
-        {
-            isMelee = true;
-        }
-        else
-        {
-            isMelee = false;
-        }
-
-        range = item.range;
-        deadRange = item.deadRange;
-
-        currentItem = item;
-    }
-
     public PlayerAttack(bool newIsMelee = false, int newRange = 0, int newDeadRange = 0)
     {
         isMelee = newIsMelee;
@@ -54,20 +35,7 @@ public class Battle {
     private GameController gc;
 
     public PlayerAttack currentPlayerAttack = null;
-    public Item currentItem
-    {
-        get
-        {
-            if (currentPlayerAttack != null)
-            {
-                return currentPlayerAttack.currentItem;
-            }
-            else
-            {
-                return null;
-            }
-        }
-    }
+    public Item currentItem = null;
 
     //GETTERS
     public int Count
@@ -236,6 +204,17 @@ public class Battle {
     }
 
     //ATTACK TOOLS
+    public void SetCurrentAttack(bool newIsMelee = false, int newRange = 0, int newDeadRange = 0)
+    {
+        currentPlayerAttack = new PlayerAttack(newIsMelee, newRange, newDeadRange);
+        gc.currentItem = null;
+    }
+    public void SetCurrentAttack(Item item)
+    {
+        currentPlayerAttack = new PlayerAttack(item.type == ItemType.Potion, item.range, item.deadRange);
+        gc.currentItem = item;
+    }
+
     public void AttackPreview()
     {
         foreach(Entity entity in allEntities)
@@ -247,6 +226,7 @@ public class Battle {
     public void NullCurrentAttackPreview()
     {
         currentPlayerAttack = null;
+        gc.currentItem = null;
         AttackPreview();
     }
 

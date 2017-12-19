@@ -101,8 +101,10 @@ MonoBehaviour:
     trueMax: 3
     max: 0
     current: 0
+  healthBar: {fileID: 0}
+  healthBarPos: 2.2
   atk:
-    max: 0
+    max: 5
     current: 0
   def:
     max: 0

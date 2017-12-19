@@ -25,6 +25,7 @@ public class GameController : MonoBehaviour
     public float center;
 
     public GameObject attackReticle, noAttackReticle,
+        healthBar,
         defaultVisEffect, blackOut;
 
     private Animator blackOutAnimator;
@@ -54,8 +55,7 @@ public class GameController : MonoBehaviour
 
     public List<Sprite> itemSprites = new List<Sprite>();
 
-    //ITEMS
-    public Item test;
+    public Item currentItem = null;
 
     private static int currentID = -1;
     public static int newID
@@ -74,9 +74,7 @@ public class GameController : MonoBehaviour
 
     void Start ()
     {
-        //StartCoroutine(BattleTrigger());
-
-        //GiveItem(new Test(), 20);
+        GiveItem(new Item.Test(), 20);
 
 	}
 	
@@ -209,7 +207,6 @@ public class GameController : MonoBehaviour
     public void Attack(Entity target, int dmg)
     {
         target.Hurt(dmg);
-        print("Player Attacks!");
     }
 }
 

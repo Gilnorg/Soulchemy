@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum Alliance { friendly, hostile };
 
@@ -39,6 +40,9 @@ public class Entity : MonoBehaviour
     }
 
     public Resource hp, mov;
+
+    public GameObject healthBar;
+    public float healthBarPos = 2.2f;
 
     [System.Serializable]
     public struct Stat
@@ -85,6 +89,9 @@ public class Entity : MonoBehaviour
 
         attackReticle = Instantiate(gc.attackReticle, transform, false);
         attackReticle.SetActive(false);
+
+        healthBar = Instantiate(gc.healthBar, gc.mainCanvas.transform);
+        healthBar.name = "HealthBar(" + name + id + ")";
     }
 
     public void Update()
@@ -100,7 +107,18 @@ public class Entity : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, Vector3.up * GameController.floorY, 10 * Time.deltaTime);
         }
 
+        UpdateHealthBar();
+    }
 
+    protected void UpdateHealthBar()
+    {
+        healthBar.transform.position = transform.position + Vector3.up * healthBarPos;
+
+        var health = healthBar.transform.Find("Health");
+        health.localScale = new Vector3(hp.current / (float)hp.max, 1);
+
+        var text = healthBar.transform.Find("Text").GetComponent<Text>();
+        text.text = "HP: " + hp.current;
     }
 
     public virtual void Move()
@@ -114,13 +132,13 @@ public class Entity : MonoBehaviour
 
         if (attacker != null)
         {
-
+            //TODO
         }
 
         Debug.Log("Hit " + name + id + " for " + dmg + " damage.");
     }
 
-    protected void SetAttack(Empty newAttack, string newAnim)
+    public void SetAttack(Empty newAttack, string newAnim)
     {
         currentAttack = newAttack;
         currentAnim = newAnim;
@@ -129,6 +147,7 @@ public class Entity : MonoBehaviour
     public void PlayAttack()
     {
         animator.Play(currentAnim);
+        // animation runs currentAttack func
     }
 
     protected void NullAttack()
