@@ -35,7 +35,7 @@ public class InventoryButton : MonoBehaviour {
             {
                 if (gc.currentItem == null)
                 {
-                    gc.currentBattle.SetCurrentAttack(item);
+                    gc.currentBattle.SetCurrentAttackPreview(item);
                     gc.player.SetAttack(item.Func, "Throw");
 
                     if (!gc.cheatInfiniteItems)

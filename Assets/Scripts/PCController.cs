@@ -25,6 +25,18 @@ public class PCController : Entity {
         gc.currentBattle.state = BattleState.playerTurn;
     }
 
+    public override void Hurt(int dmg, Entity attacker = null)
+    {
+        if (!gc.cheatInvincible)
+        {
+            base.Hurt(dmg, attacker);
+            if (hp.current <= 0)
+            {
+                gc.currentBattle.Lose();
+            }
+        }
+    }
+
     public void PlayAttack(Entity newTarget)
     {
         gc.currentBattle.state = BattleState.enemyTurn;

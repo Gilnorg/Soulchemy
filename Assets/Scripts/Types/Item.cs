@@ -44,7 +44,7 @@ public class Item {
             sprite = gc.itemSprites[0];
 
             stackSize = 15;
-            dmg = 5;
+            dmg = 100;
             range = 1;
             deadRange = 0;
         }
@@ -53,7 +53,7 @@ public class Item {
         {
             base.Func();
 
-            gc.currentBattle.SplashAttack(target.loc, dmg, gc.Attack, range, deadRange);
+            gc.currentBattle.SplashAttack(target.loc, dmg, range, deadRange);
         }
     }
 

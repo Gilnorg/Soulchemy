@@ -59,25 +59,24 @@ public class StatusEffect {
     {
 
     }
-
-}
-
-public class Poison : StatusEffect
-{
-    public Poison(int newDmg = 3, int newTimer = 3, int newRange = 0, int newDeadRange = 0) 
-        : base(newDmg, newTimer, newRange, newDeadRange)
+    
+    public class Poison : StatusEffect
     {
-        name = "Poison";
-    }
+        public Poison(int newDmg = 3, int newTimer = 3, int newRange = 0, int newDeadRange = 0)
+            : base(newDmg, newTimer, newRange, newDeadRange)
+        {
+            name = "Poison";
+        }
 
-    public Poison(Poison newPoison)
-        : base(newPoison)
-    {
-        name = "Poison";
-    }
+        public Poison(Poison newPoison)
+            : base(newPoison)
+        {
+            name = "Poison";
+        }
 
-    public override void EndEffect(Entity target, int dmg)
-    {
-        target.Hurt(dmg);
+        public override void EndEffect(Entity target, int dmg)
+        {
+            target.Hurt(dmg);
+        }
     }
 }

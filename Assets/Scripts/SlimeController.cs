@@ -26,23 +26,26 @@ public class SlimeController : Enemy {
 
         FaceMe(currentTarget);
 
-        SetAttack(BasicAttack, "Attack");
+        if (IsAdjacent(currentTarget))
+        {
+            SetAttack(SlimeAttack, "Slime");
+        }
+        else
+        {
+            Advance();
+            return;
+        }
 
         PlayAttack();
     }
 
     public void BasicAttack()
     {
-        print("Attacks!");
+        currentTarget.Hurt(atk.current);
     }
 
     public void SlimeAttack()
     {
-        print("SlimeAttacks!");
-    }
-
-    protected void UsePoison(Entity target, int dmg)
-    {
-        gc.currentBattle.SplashEffect(target, new Poison());
+        gc.currentBattle.SplashAttack(loc, atk.current, 1, 1);
     }
 }

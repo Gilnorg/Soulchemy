@@ -64,7 +64,6 @@ public class Map {
                 {
                     coords = new IntVector2(x, y);
                     gc.mapHandler.UpdatePlayer(coords);
-                    Debug.Log(coords + ", " + map[coords.x][coords.y].type);
                     return;
                 }
             }

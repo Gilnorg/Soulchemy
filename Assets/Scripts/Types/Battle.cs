@@ -4,8 +4,6 @@ using UnityEngine;
 
 public enum BattleState { start, enemyTurn, playerTurn, win, loss }
 
-public delegate void Effect(Entity target, int dmg);
-
 public class PlayerAttack
 {
     public bool isMelee;
@@ -102,22 +100,30 @@ public class Battle {
 
     public void Advance()
     {
-
         state = BattleState.enemyTurn;
 
         //find entity with greatest spd
         int bigSpd = -100, newCurrentTurn = -1;
-
-        string debug = "";
+        bool won = true;
 
         foreach (Entity entity in allEntities)
         {
-            debug += entity.gone + " ";
-            if (entity.spd.current > bigSpd && !entity.gone)
+            if (!entity.dead && entity.alliance != Alliance.friendly)
+            {
+                won = false;
+            }
+
+            if (entity.spd.current > bigSpd && !entity.gone && !entity.dead)
             {
                 bigSpd = entity.spd.current;
                 newCurrentTurn = entity.loc;
             }
+        }
+
+        if (won)
+        {
+            Win();
+            return;
         }
 
         //if new enemy has been found, move on
@@ -135,8 +141,6 @@ public class Battle {
 
             ApplyStatusEffects(true);
 
-            Debug.Log(currentEntity.name + currentEntity.id + " attacks!");
-
             currentEntity.animator.Play("Bounce");
         }
         else //if all enemies have gone, restart
@@ -150,9 +154,31 @@ public class Battle {
         }
     }
 
-    public void End()
+    public void Win()
     {
         gc.state = GameState.inField;
+
+        foreach(Entity entity in allEntities)
+        {
+            if (entity.alliance != Alliance.friendly)
+            {
+                Object.Destroy(entity.gameObject);
+                Object.Destroy(entity.healthBar);
+                allEntities.Remove(entity);
+                set = false;
+                Win();
+                break;
+            }
+            else
+            {
+                entity.gone = false;
+            }
+        }
+    }
+
+    public void Lose()
+    {
+
     }
 
 
@@ -204,12 +230,12 @@ public class Battle {
     }
 
     //ATTACK TOOLS
-    public void SetCurrentAttack(bool newIsMelee = false, int newRange = 0, int newDeadRange = 0)
+    public void SetCurrentAttackPreview(bool newIsMelee = false, int newRange = 0, int newDeadRange = 0)
     {
         currentPlayerAttack = new PlayerAttack(newIsMelee, newRange, newDeadRange);
         gc.currentItem = null;
     }
-    public void SetCurrentAttack(Item item)
+    public void SetCurrentAttackPreview(Item item)
     {
         currentPlayerAttack = new PlayerAttack(item.type == ItemType.Potion, item.range, item.deadRange);
         gc.currentItem = item;
@@ -293,8 +319,6 @@ public class Battle {
                 statusEffect.EndEffect(currentEntity, statusEffect.dmg);
                 statusEffect.timer--;
 
-                Debug.Log(statusEffect.timer);
-
                 if (statusEffect.timer <= 0)
                 {
                     deadEffects.Add(statusEffect);
@@ -310,8 +334,9 @@ public class Battle {
         }
     }
 
+
     //Splash Attack
-    public void SplashAttack(int target, int dmg, Effect effect, int range = 1, int deadRange = 0)
+    public void SplashAttack(int target, int dmg, int range = 1, int deadRange = 0)
     {
         int LBounds = Mathf.Clamp(target - range, 0, Count - 1);
         int UBounds = Mathf.Clamp(target + range, 0, Count - 1);
@@ -320,22 +345,28 @@ public class Battle {
         {
             if (i <= target - deadRange || i >= target + deadRange)
             {
-                effect(allEntities[i], dmg);
+                allEntities[i].Hurt(dmg);
             }
         }
     }
-
-
+    
     //Splash Effect
-    public void SplashEffect(Entity target, StatusEffect statusEffect)
+    public void SplashEffect(int target, StatusEffect statusEffect, int range = 1, int deadRange = 0)
     {
-        target.statusEffects.Add(new StatusEffect(statusEffect));
+        int LBounds = Mathf.Clamp(target - range, 0, Count - 1);
+        int UBounds = Mathf.Clamp(target + range, 0, Count - 1);
 
-        statusEffect.OnApply(target, statusEffect.dmg);
+        for (int i = LBounds; i <= UBounds; i++)
+        {
+            if (i <= target - deadRange || i >= target + deadRange)
+            {
+                allEntities[i].statusEffects.Add(new StatusEffect(statusEffect));
 
-        Object.Instantiate(statusEffect.visEffect, target.transform);
+                statusEffect.OnApply(allEntities[i], statusEffect.dmg);
 
-        Debug.Log("Splashed " + target.name + target.id + " with " + statusEffect.name);
+                Object.Instantiate(statusEffect.visEffect, allEntities[i].transform);
+            }
+        }
     }
 
 }

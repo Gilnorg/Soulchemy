@@ -15,7 +15,7 @@ public class Entity : MonoBehaviour
     public Empty currentAttack;
     public string currentAnim;
 
-    public bool gone;
+    public bool gone, dead;
 
     public int id;
 
@@ -129,13 +129,15 @@ public class Entity : MonoBehaviour
     public virtual void Hurt(int dmg, Entity attacker = null)
     {
         hp.current = Mathf.Clamp(hp.current - dmg, 0, hp.max);
+        if (hp.current <= 0)
+        {
+            dead = true;
+        }
 
         if (attacker != null)
         {
             //TODO
         }
-
-        Debug.Log("Hit " + name + id + " for " + dmg + " damage.");
     }
 
     public void SetAttack(Empty newAttack, string newAnim)
@@ -200,5 +202,10 @@ public class Entity : MonoBehaviour
         {
             target.spRenderer.flipX = true;
         }
+    }
+
+    protected bool IsAdjacent(Entity target)
+    {
+        return Mathf.Abs(loc - target.loc) <= 1;
     }
 }

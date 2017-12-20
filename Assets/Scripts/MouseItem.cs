@@ -19,7 +19,6 @@ public class MouseItem : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         Item item = gc.currentItem;
-        print(item);
 		if (item != null)
         {
             rTransform.anchoredPosition = Input.mousePosition;
