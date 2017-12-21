@@ -85,11 +85,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 661a9d6ae3c7d86469dd84f44df36d20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  BasicAttack:
+    priority: 0
+    anim: Attack
   attackReticle: {fileID: 0}
   animator: {fileID: 0}
   currentTarget: {fileID: 0}
   currentAnim: 
   gone: 0
+  dead: 0
   id: 0
   alliance: 0
   loc: 0
@@ -99,6 +103,10 @@ MonoBehaviour:
     current: 0
   mov:
     trueMax: 3
+    max: 0
+    current: 0
+  lust:
+    trueMax: 10
     max: 0
     current: 0
   healthBar: {fileID: 0}

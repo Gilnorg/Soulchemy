@@ -48,17 +48,11 @@ public class PCController : Entity {
         PlayAttack();
     }
 
-    private void BasicAttack()
-    {
-        currentTarget.Hurt(atk.current, this);
-    }
-
-
     public void AttackButton()
     {
-        if (currentAttack != BasicAttack)
+        if (currentAttack != HurtTarget)
         {
-            SetAttack(BasicAttack, "Attack");
+            SetAttack(HurtTarget, "Attack");
             gc.currentBattle.currentPlayerAttack = new PlayerAttack(true);
 
             gc.currentBattle.AttackPreview(this);

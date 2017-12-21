@@ -6082,6 +6082,7 @@ MonoBehaviour:
   cheatInvincible: 0
   mainCanvas: {fileID: 327460421}
   battleUnits: {fileID: 2015610705}
+  guiC: {fileID: 918211243}
   mapHandler: {fileID: 699592109}
   bigTileHandler: {fileID: 1960619720}
   player: {fileID: 1998412867}

@@ -83,8 +83,39 @@ public class Map {
         {
             coords = newCoords;
             gc.mapHandler.UpdatePlayer(coords);
-            if (runFunc) map[coords.x][coords.y].Func();
+            if (runFunc)
+            {
+                map[coords.x][coords.y].Func();
+                gc.guiC.ToggleButtons(gc.guiC.exploringArrows, GetActiveExploreButtons());
+            }
         }
+    }
+
+    string[] GetActiveExploreButtons()
+    {
+        string[] activeButtons = new string[4];
+
+        if (coords.y < height - 1 && GetTile(coords + IntVector2.up).type != TileType.none)
+        {
+            activeButtons[0] = "Up";
+        }
+
+        if (coords.x < width - 1 && GetTile(coords + IntVector2.right).type != TileType.none)
+        {
+            activeButtons[1] = "Right";
+        }
+
+        if (coords.y > 0 && GetTile(coords + IntVector2.down).type != TileType.none)
+        {
+            activeButtons[2] = "Down";
+        }
+
+        if (coords.x > 0 && GetTile(coords + IntVector2.left).type != TileType.none)
+        {
+            activeButtons[3] = "Left";
+        }
+
+        return activeButtons;
     }
 
     public Tile GetTile(int x, int y)

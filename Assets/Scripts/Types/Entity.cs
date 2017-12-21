@@ -11,6 +11,9 @@ public class Entity : MonoBehaviour
     public GameObject attackReticle;
     public Animator animator;
 
+    public SpriteRenderer spRenderer;
+    protected BoxCollider2D box2d;
+
     public Entity currentTarget;
     public Empty currentAttack;
     public string currentAnim;
@@ -39,7 +42,7 @@ public class Entity : MonoBehaviour
         }
     }
 
-    public Resource hp, mov;
+    public Resource hp, mov, lust;
 
     public GameObject healthBar;
     public float healthBarPos = 2.2f;
@@ -58,9 +61,6 @@ public class Entity : MonoBehaviour
     public Stat atk, def, spd;
 
     public List<StatusEffect> statusEffects = new List<StatusEffect>();
-
-    public SpriteRenderer spRenderer;
-    protected BoxCollider2D box2d;
 
     protected Vector2 baseScale;
 
@@ -82,6 +82,7 @@ public class Entity : MonoBehaviour
 
         hp.TrueReset();
         mov.TrueReset();
+        lust.TrueReset();
 
         atk.Reset();
         def.Reset();
@@ -159,7 +160,7 @@ public class Entity : MonoBehaviour
         currentTarget = null;
     }
 
-    public void Attack()
+    public void RunAttack()
     {
         currentAttack();
 
@@ -207,5 +208,12 @@ public class Entity : MonoBehaviour
     protected bool IsAdjacent(Entity target)
     {
         return Mathf.Abs(loc - target.loc) <= 1;
+    }
+
+
+    // Attack Prefs
+    public void HurtTarget()
+    {
+        currentTarget.Hurt(atk.current, this);
     }
 }

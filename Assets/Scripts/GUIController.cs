@@ -45,7 +45,7 @@ public class GUIController : MonoBehaviour {
         }
     }
 
-    private void ToggleButtons(GameObject parent, params string[] leaveOn)
+    public void ToggleButtons(GameObject parent, string[] leaveOn)
     {
         foreach (Transform button in parent.transform)
         {

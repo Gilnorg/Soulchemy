@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SlimeController : Enemy {
+public class SlimeController : AIController {
 
-    private bool skoodle = true;
+    public AttackContainer SlimeAttack;
 
 	// Use this for initialization
 	new void Awake () {
         base.Awake();
+
+        SlimeAttack.func = SlimeAttackFunc;
 	}
 	
 	// Update is called once per frame
@@ -28,7 +30,7 @@ public class SlimeController : Enemy {
 
         if (IsAdjacent(currentTarget))
         {
-            SetAttack(SlimeAttack, "Slime");
+            SetAttack(PickRandomAttack(BasicAttack, SlimeAttack));
         }
         else
         {
@@ -39,12 +41,7 @@ public class SlimeController : Enemy {
         PlayAttack();
     }
 
-    public void BasicAttack()
-    {
-        currentTarget.Hurt(atk.current);
-    }
-
-    public void SlimeAttack()
+    public void SlimeAttackFunc()
     {
         gc.currentBattle.SplashAttack(loc, atk.current, 1, 1);
     }
