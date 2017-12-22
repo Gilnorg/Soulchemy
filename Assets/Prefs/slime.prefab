@@ -118,14 +118,14 @@ MonoBehaviour:
   spd:
     max: 0
     current: 0
-  playerPriority: 0
-  companionPriority: 0
+  atkVariety: 3
+  atkVarietyPercent: 0.5
   BasicAttack:
-    priority: 25
-    anim: 
-  SlimeAttack:
     priority: 75
     anim: 
+  SlimeAttack:
+    priority: 50
+    anim: Slime
 --- !u!212 &212701830421751690
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -28,7 +28,7 @@ public class Battle {
 
     public Entity player, companion;
 
-    public List<Entity> allEntities = new List<Entity>();
+    public List<Entity> arena = new List<Entity>();
 
     private GameController gc;
 
@@ -38,12 +38,12 @@ public class Battle {
     //GETTERS
     public int Count
     {
-        get { return allEntities.Count; }
+        get { return arena.Count; }
     }
 
     public Entity currentEntity
     {
-        get { return allEntities[currentTurn]; }
+        get { return arena[currentTurn]; }
     }
 
 
@@ -85,8 +85,8 @@ public class Battle {
 
             //add entity to list
             Entity entity = transform.GetComponent<Entity>();
-            allEntities.Add(entity);
-            entity.loc = allEntities.Count - 1;
+            arena.Add(entity);
+            entity.loc = arena.Count - 1;
             if (entity.alliance != Alliance.friendly)
             {
                 entity.spRenderer.flipX = true;
@@ -106,7 +106,7 @@ public class Battle {
         int bigSpd = -100, newCurrentTurn = -1;
         bool won = true;
 
-        foreach (Entity entity in allEntities)
+        foreach (Entity entity in arena)
         {
             if (!entity.dead && entity.alliance != Alliance.friendly)
             {
@@ -145,7 +145,7 @@ public class Battle {
         }
         else //if all enemies have gone, restart
         {
-            foreach (Entity entity in allEntities)
+            foreach (Entity entity in arena)
             {
                 entity.gone = false;
             }
@@ -158,13 +158,13 @@ public class Battle {
     {
         gc.state = GameState.inField;
 
-        foreach(Entity entity in allEntities)
+        foreach(Entity entity in arena)
         {
             if (entity.alliance != Alliance.friendly)
             {
                 Object.Destroy(entity.gameObject);
                 Object.Destroy(entity.healthBar);
-                allEntities.Remove(entity);
+                arena.Remove(entity);
                 set = false;
                 Win();
                 break;
@@ -185,47 +185,119 @@ public class Battle {
     //MOVE LEFT
     public void MovLeft(int dist = 1)
     {
-        Mov(dist);
+        Mov(-dist);
     }
     public void MovLeft(Entity entity, int dist = 1)
     {
-        Mov(entity, dist);
+        Mov(entity, -dist);
     }
 
     //MOVE RIGHT
     public void MovRight(int dist = 1)
     {
-        Mov(-dist);
+        Mov(dist);
     }
     public void MovRight(Entity entity, int dist = 1)
     {
-        Mov(entity, -dist);
+        Mov(entity, dist);
     }
 
     //MOVE ENTITY
-    public void Mov(int dist = 1)
+    public void Mov(int dist)
     {
         Mov(currentEntity, dist);
     }
 
-    public void Mov(Entity entity, int dist = 1)
+    public void Mov(Entity entity, int dist)
     {
-        dist = Mathf.Clamp(dist, -entity.mov.current, entity.mov.current);
+        int dir = (int)Mathf.Sign(dist);
+        
+        dist = Mathf.Clamp(dist, -entity.loc, arena.Count - entity.loc - 1);
 
-        currentTurn = Mathf.Clamp(currentTurn - dist, 0, Count - 1);
+        if (dist == 0) return;
 
-        allEntities.Remove(entity);
+        for (int i = 0; Mathf.Abs(i) < Mathf.Abs(dist); i += dir)
+        {
+            Entity checkEntity = arena[entity.loc + dir];
 
-        allEntities.Insert(Mathf.Clamp(entity.loc - dist, 0, Count), entity);
+            // if nothing is in the way...
+            if (!checkEntity.blocking && !checkEntity.lockedLeft && !checkEntity.lockedRight)
+            {
+                if (entity.mov.current >= 1)
+                    MovForwards(entity, dir);
+                else return;
+            }
+
+            // if enemy is not blocking...
+            else if (!checkEntity.blocking)
+            {
+                int lockStep = dir;
+
+                // if entity is multitile...
+                if (checkEntity.lockedLeft)
+                {
+                    while (!arena[checkEntity.loc + lockStep].lockedRight)
+                    {
+                        lockStep += dir;
+                        if (checkEntity.loc + lockStep < 2 || i + lockStep > arena.Count - 2)
+                            break;
+                    }
+
+                    lockStep += dir;
+
+                    if (Mathf.Abs(lockStep) <= entity.mov.current)
+                    {
+                        MovForwards(entity, lockStep);
+                        i += lockStep;
+                    }
+                    else return;
+                }
+                else if (checkEntity.lockedRight)
+                {
+                    while (!arena[checkEntity.loc + lockStep].lockedLeft)
+                    {
+                        lockStep += dir;
+                        if (checkEntity.loc + lockStep < 2 || i + lockStep > arena.Count - 2)
+                            break;
+                    }
+
+                    lockStep += dir;
+
+                    if (Mathf.Abs(lockStep) <= entity.mov.current)
+                    {
+                        MovForwards(entity, lockStep);
+                        i += lockStep;
+                    }
+                    else return;
+                }
+            }
+        }
+    }
+
+    private void MovForwards(Entity entity, int dist)
+    {
+        arena.Remove(entity);
+
+        if (entity.loc + dist < arena.Count)
+        {
+            arena.Insert(entity.loc + dist, entity);
+        }
+        else
+        {
+            arena.Add(entity);
+        }
 
         SetLocations();
+        currentTurn += dist;
+
+        entity.mov.current -= Mathf.Abs(dist);
     }
 
     public void SetLocations()
     {
         for (int i = 0; i < Count; i++)
         {
-            allEntities[i].loc = i;
+            arena[i].loc = i;
         }
     }
 
@@ -243,7 +315,7 @@ public class Battle {
 
     public void AttackPreview()
     {
-        foreach(Entity entity in allEntities)
+        foreach(Entity entity in arena)
         {
             entity.attackReticle.SetActive(false);
         }
@@ -272,11 +344,11 @@ public class Battle {
                     if (i >= LBounds && i <= UBounds
                         && (i <= target.loc - 1 || i >= target.loc + 1))
                     {
-                        allEntities[i].attackReticle.SetActive(true);
+                        arena[i].attackReticle.SetActive(true);
                     }
                     else
                     {
-                        allEntities[i].attackReticle.SetActive(false);
+                        arena[i].attackReticle.SetActive(false);
                     }
                 }
             }
@@ -290,11 +362,11 @@ public class Battle {
                     if (i >= LBounds && i <= UBounds
                         && (i <= target.loc - currentPlayerAttack.deadRange || i >= target.loc + currentPlayerAttack.deadRange))
                     {
-                        allEntities[i].attackReticle.SetActive(true);
+                        arena[i].attackReticle.SetActive(true);
                     }
                     else
                     {
-                        allEntities[i].attackReticle.SetActive(false);
+                        arena[i].attackReticle.SetActive(false);
                     }
                 }
             }
@@ -345,7 +417,7 @@ public class Battle {
         {
             if (i <= target - deadRange || i >= target + deadRange)
             {
-                allEntities[i].Hurt(dmg);
+                arena[i].Hurt(dmg);
             }
         }
     }
@@ -360,11 +432,11 @@ public class Battle {
         {
             if (i <= target - deadRange || i >= target + deadRange)
             {
-                allEntities[i].statusEffects.Add(new StatusEffect(statusEffect));
+                arena[i].statusEffects.Add(new StatusEffect(statusEffect));
 
-                statusEffect.OnApply(allEntities[i], statusEffect.dmg);
+                statusEffect.OnApply(arena[i], statusEffect.dmg);
 
-                Object.Instantiate(statusEffect.visEffect, allEntities[i].transform);
+                Object.Instantiate(statusEffect.visEffect, arena[i].transform);
             }
         }
     }

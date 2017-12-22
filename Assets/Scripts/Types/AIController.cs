@@ -38,7 +38,7 @@ public class AIController : Entity
     {
         List<Entity> targets = new List<Entity>();
 
-        foreach (Entity entity in gc.currentBattle.allEntities)
+        foreach (Entity entity in gc.currentBattle.arena)
         {
             if (entity.alliance != alliance)
             {
@@ -52,21 +52,10 @@ public class AIController : Entity
 
     protected void MoveToEntity(Entity target)
     {
-        int dist = gc.currentBattle.currentEntity.loc - target.loc;
-        int dir = Mathf.Abs(dist) / dist;
-
-        if (dir > 0)
-        {
-            spRenderer.flipX = true;
-        }
-        else
-        {
-            spRenderer.flipX = false;
-        }
-
-        int lastLoc = gc.currentBattle.currentEntity.loc;
+        int dist = -gc.currentBattle.currentEntity.loc - target.loc;
+        int dir = (int)Mathf.Sign(dist);
+        
         gc.currentBattle.Mov(dist - dir);
-        gc.currentBattle.currentEntity.mov.current -= Mathf.Abs(lastLoc - gc.currentBattle.currentEntity.loc);
     }
 
     protected List<AttackContainer> lastAtk = new List<AttackContainer>();

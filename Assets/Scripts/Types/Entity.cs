@@ -18,7 +18,7 @@ public class Entity : MonoBehaviour
     public Empty currentAttack;
     public string currentAnim;
 
-    public bool gone, dead;
+    public bool gone, dead, blocking, lockedLeft, lockedRight;
 
     public int id;
 

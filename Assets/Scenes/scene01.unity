@@ -6104,7 +6104,7 @@ MonoBehaviour:
     currentTurn: 0
     player: {fileID: 0}
     companion: {fileID: 0}
-    allEntities: []
+    arena: []
   battles:
   - name: Slimes
     chance: 0
@@ -6200,6 +6200,11 @@ Prefab:
     - target: {fileID: 4351928491723896, guid: cbd2de8af6546604895b3597e0ea881a, type: 2}
       propertyPath: m_RootOrder
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114716149813927052, guid: cbd2de8af6546604895b3597e0ea881a,
+        type: 2}
+      propertyPath: mov.trueMax
+      value: 50
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: cbd2de8af6546604895b3597e0ea881a, type: 2}
