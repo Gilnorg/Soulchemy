@@ -26,17 +26,27 @@ public class SlimeController : AIController {
         //move to target
         MoveToEntity(currentTarget);
 
-        FaceMe(currentTarget);
-
         if (IsAdjacent(currentTarget))
         {
             SetAttack(PickRandomAttack(BasicAttack, SlimeAttack));
         }
         else
         {
-            Advance();
-            return;
+            List<Entity> adjacent = GetAdjacent();
+
+            if (adjacent.Count > 0)
+            {
+                currentTarget = adjacent[Random.Range(0, adjacent.Count - 1)];
+                SetAttack(PickRandomAttack(BasicAttack, SlimeAttack));
+            }
+            else
+            {
+                Advance();
+                return;
+            }
         }
+
+        FaceMe(currentTarget);
 
         PlayAttack();
     }

@@ -31,11 +31,11 @@ public class Map {
             //generate map
             map = new List<List<Tile>>
             {
-                new List<Tile> { new Tile(), new Tile.Path(), new Tile.Path() },
+                new List<Tile> { new Tile.Path(), new Tile.Path(), new Tile.Path() },
 
-                new List<Tile> { new Tile(), new Tile.Start(), new Tile.Battle() },
+                new List<Tile> { new Tile.Start(), new Tile.Path(), new Tile.Path() },
 
-                new List<Tile> { new Tile(), new Tile.Battle(), new Tile.Path() }
+                new List<Tile> { new Tile.Path(), new Tile.Path(), new Tile.Path() }
             };
         }
         else
@@ -86,7 +86,6 @@ public class Map {
             if (runFunc)
             {
                 map[coords.x][coords.y].Func();
-                gc.guiC.ToggleButtons(gc.guiC.exploringArrows, GetActiveExploreButtons());
             }
         }
     }
@@ -120,12 +119,26 @@ public class Map {
 
     public Tile GetTile(int x, int y)
     {
-        return map[x][y];
+        return GetTile(new IntVector2(x, y));
+    }
+
+    public Tile GetTile(Axis axis, int dir)
+    {
+        var checkCoords = (axis == Axis.x) ? new IntVector2(1, 0) : new IntVector2(0, 1);
+        checkCoords *= dir;
+
+        return GetTile(coords + checkCoords);
     }
 
     public Tile GetTile(IntVector2 _coords)
     {
-        return map[_coords.x][_coords.y];
+        if (_coords.x >= 0 && _coords.x < width
+            && _coords.y >= 0 && _coords.y < height)
+        {
+            return map[_coords.x][_coords.y];
+        }
+
+        return null;
     }
 
 }
@@ -155,15 +168,18 @@ public class IntVector2
     {
         return new Vector2(iV2.x, iV2.y);
     }
-
     public static explicit operator Vector3(IntVector2 iV2)
     {
-        return new Vector3(iV2.x, iV2.y, 0);
+        return new Vector3(iV2.x, iV2.y);
     }
 
     public static IntVector2 operator +(IntVector2 one, IntVector2 two)
     {
         return new IntVector2(one.x + two.x, one.y + two.y);
+    }
+    public static IntVector2 operator -(IntVector2 neg)
+    {
+        return new IntVector2(-neg.x, -neg.y);
     }
     public static IntVector2 operator -(IntVector2 one, IntVector2 two)
     {
@@ -184,6 +200,15 @@ public class IntVector2
     public static bool operator !=(IntVector2 one, IntVector2 two)
     {
         return !(one.x == two.x) && (one.y == two.y);
+    }
+
+    public override bool Equals(object eq)
+    {
+        return this == (IntVector2)eq;
+    }
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
     }
 
     public static IntVector2 up = new IntVector2(0, 1);

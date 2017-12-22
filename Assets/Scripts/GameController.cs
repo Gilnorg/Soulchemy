@@ -10,7 +10,7 @@ public delegate void Empty();
 public class GameController : MonoBehaviour
 {
     public const float floorY = 1.5f;
-    public const float unitWidth = 2.5f;
+    public const float unitWidth = 2.1f;
 
     public bool cheatInfiniteItems, cheatInvincible;
 

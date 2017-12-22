@@ -205,6 +205,22 @@ public class Entity : MonoBehaviour
         }
     }
 
+    protected List<Entity> GetAdjacent()
+    {
+        List<Entity> adjacent = new List<Entity>();
+
+        if (loc > 0 && gc.currentBattle.arena[loc - 1].alliance != alliance)
+        {
+            adjacent.Add(gc.currentBattle.arena[loc - 1]);
+        }
+
+        if (loc < gc.currentBattle.arena.Count - 1 && gc.currentBattle.arena[loc + 1].alliance != alliance)
+        {
+            adjacent.Add(gc.currentBattle.arena[loc + 1]);
+        }
+
+        return adjacent;
+    }
     protected bool IsAdjacent(Entity target)
     {
         return Mathf.Abs(loc - target.loc) <= 1;

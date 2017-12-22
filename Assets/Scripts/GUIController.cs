@@ -74,12 +74,12 @@ public class GUIController : MonoBehaviour {
     //BUTTON TRIGGERS
     public void MOVPlayerLeft()
     {
-        gc.currentBattle.MovLeft(2);
+        gc.currentBattle.MovLeft();
         gc.currentBattle.AttackPreview(gc.player);
     }
     public void MOVPlayerRight()
     {
-        gc.currentBattle.MovRight(2);
+        gc.currentBattle.MovRight();
         gc.currentBattle.AttackPreview(gc.player);
     }
 }

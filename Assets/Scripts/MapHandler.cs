@@ -8,7 +8,7 @@ public class MapHandler : MonoBehaviour {
     private GameController gc;
     private GameObject playerMark;
 
-    public GameObject container;
+    public GameObject container, display;
     public GameObject tilePref, playerMarkPref;
 
     public float tileWidth;
@@ -34,6 +34,11 @@ public class MapHandler : MonoBehaviour {
     public void ToggleMap()
     {
         gameObject.SetActive(!gameObject.activeSelf);
+    }
+
+    public void RotateMap(Vector3 newRotation)
+    {
+        display.transform.Rotate(newRotation);
     }
 
     public void UpdatePlayer(IntVector2 pos)

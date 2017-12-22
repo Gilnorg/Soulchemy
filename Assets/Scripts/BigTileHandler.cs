@@ -2,16 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum Axis { x, y }
 public class BigTileHandler : MonoBehaviour {
 
     GameController gc;
 
     public float tileWidth, walkSpeed;
 
-    public enum Axis { x, y }
     public Axis currentAxis;
 
-    public int dir = 1;
+    public Axis notAxis
+    {
+        get { return (currentAxis == Axis.x) ? Axis.y : Axis.x; }
+    }
 
     public bool triggered, moving;
 
@@ -75,8 +78,7 @@ public class BigTileHandler : MonoBehaviour {
     // swap axis between vertical and horizontal
     private void ToggleAxis()
     {
-        if (currentAxis == Axis.x) SetAxis(Axis.y);
-        else SetAxis(Axis.x);
+        SetAxis(notAxis);
     }
 
     private void SetAxis(Axis newAxis)
@@ -101,7 +103,7 @@ public class BigTileHandler : MonoBehaviour {
 
                 if (bigTile != null)
                 {
-                    ActivateBigTile(bigTile, bigTile.coords.x);
+                    ActivateBigTile(bigTile, rot.x > 0 ? bigTile.coords.x : gc.currentMap.width - bigTile.coords.x);
                 }
             }
         }
@@ -111,7 +113,7 @@ public class BigTileHandler : MonoBehaviour {
             {
                 if (bigTile != null)
                 {
-                    ActivateBigTile(bigTile, bigTile.coords.y);
+                    ActivateBigTile(bigTile, rot.x > 0 ? bigTile.coords.y : gc.currentMap.height - bigTile.coords.y);
                 }
             }
         }
@@ -156,6 +158,14 @@ public class BigTileHandler : MonoBehaviour {
                 moving = false;
 
                 gc.currentMap.SetCoords(activeTile.coords);
+                gc.guiC.ToggleButtons(gc.guiC.exploringArrows, new string[4]
+                {
+                    gc.currentMap.GetTile(notAxis, rot.y) != null ? "Up" : null,
+                    gc.currentMap.GetTile(notAxis, -rot.y) != null ? "Down" : null,
+                    gc.currentMap.GetTile(currentAxis, rot.x) != null ? "Right" : null,
+                    gc.currentMap.GetTile(currentAxis, -rot.x) != null ? "Left" : null
+                }
+                );
 
                 transform.position -= activeTile.transform.position;
                 transform.position = new Vector3(transform.position.x, 1);
@@ -174,66 +184,85 @@ public class BigTileHandler : MonoBehaviour {
             transform.position += Vector3.left * dir * walkSpeed * Time.deltaTime;
         }
     }
+    
+    public int dir = 1;
+    public IntVector2 rot = new IntVector2(1, 1);
 
+    private void Rotate(int dir)
+    {        
+        if (dir > 0) //rotate counterclockwise
+        {
+            for (int i = Mathf.Abs(dir); i > 0; i--)
+            {
+                if (rot.x == rot.y)
+                {
+                    rot.y *= -1;
+                }
+                else
+                {
+                    rot.x = rot.y;
+                }
+
+                gc.mapHandler.RotateMap(new Vector3(0, 0, -90));
+            }
+        }
+
+        else if (dir < 0) //rotate clockwise
+        {
+            for (int i = Mathf.Abs(dir); i > 0; i--)
+            {
+                if (rot.y == rot.x)
+                {
+                    rot.x *= -1;
+                }
+                else
+                {
+                    rot.y = rot.x;
+                }
+
+                gc.mapHandler.RotateMap(new Vector3(0, 0, 90));
+            }
+        }
+                
+        else return; //no rotation
+
+        print(rot);
+    }
 
     // Move Functions
     public void MoveUp()
     {
-        dir = 1;
-
-        IntVector2 currentCoords = gc.currentMap.coords;
-
-        if (currentCoords.y < gc.currentMap.height - 1 && gc.currentMap.GetTile(currentCoords + IntVector2.up).type != TileType.none)
-        {
-            if (currentAxis == Axis.x) // fade out, then toggle axis to vertical
-            {
-                gc.currentMap.SetCoords(gc.currentMap.coords + IntVector2.up, false);
-                gc.FadeOut(ToggleAxis);
-            }
-            else // start moving
-            {
-                moving = true;
-            }
-        }
+        var currentRot = rot.y;
+        Rotate(1);
+        MoveAlongNotAxis(currentRot);
     }
 
     public void MoveDown()
     {
-        dir = -1;
+        var currentRot = rot.y;
+        Rotate(-1);
+        MoveAlongNotAxis(-currentRot);
+    }
 
-        IntVector2 currentCoords = gc.currentMap.coords;
+    private void MoveAlongNotAxis(int dir)
+    {
+        IntVector2 currentCoords = notAxis == Axis.x ? new IntVector2(dir, 0) + gc.currentMap.coords : new IntVector2(0, dir) + gc.currentMap.coords;
 
-        if (currentCoords.y > 0 && gc.currentMap.GetTile(currentCoords + IntVector2.down).type != TileType.none)
+        if (gc.currentMap.GetTile(notAxis, dir) != null)
         {
-            if (currentAxis == Axis.x) // fade out, then toggle axis to vertical
-            {
-                gc.currentMap.SetCoords(gc.currentMap.coords + IntVector2.down, false);
-                gc.FadeOut(ToggleAxis);
-            }
-            else // start moving
-            {
-                moving = true;
-            }
+            gc.currentMap.SetCoords(currentCoords, false);
+            gc.FadeOut(ToggleAxis);
         }
+        else print(currentCoords);
     }
 
     public void MoveRight()
     {
         dir = 1;
 
-        IntVector2 currentCoords = gc.currentMap.coords;
-
-        if (currentCoords.x < gc.currentMap.width - 1 && gc.currentMap.GetTile(currentCoords + IntVector2.right).type != TileType.none)
+        if (gc.currentMap.GetTile(currentAxis, rot.x) != null)
         {
-            if (currentAxis == Axis.y) // fade out, then toggle axis to horizontal
-            {
-                gc.currentMap.SetCoords(gc.currentMap.coords + IntVector2.right, false);
-                gc.FadeOut(ToggleAxis);
-            }
-            else // start moving
-            {
-                moving = true;
-            }
+            moving = true;
         }
     }
 
@@ -241,19 +270,9 @@ public class BigTileHandler : MonoBehaviour {
     {
         dir = -1;
 
-        IntVector2 currentCoords = gc.currentMap.coords;
-
-        if (currentCoords.x > 0 && gc.currentMap.GetTile(currentCoords + IntVector2.left).type != TileType.none)
+        if (gc.currentMap.GetTile(currentAxis, -rot.x) != null)
         {
-            if (currentAxis == Axis.y) // fade out, then toggle axis to horizontal
-            {
-                gc.currentMap.SetCoords(gc.currentMap.coords + IntVector2.left, false);
-                gc.FadeOut(ToggleAxis);
-            }
-            else // start moving
-            {
-                moving = true;
-            }
+            moving = true;
         }
     }
 
