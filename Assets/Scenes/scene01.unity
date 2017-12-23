@@ -501,7 +501,6 @@ RectTransform:
   - {fileID: 1290899515}
   - {fileID: 1634716641}
   - {fileID: 1290632317}
-  - {fileID: 2124025623}
   - {fileID: 1331033749}
   - {fileID: 1866015444}
   m_Father: {fileID: 0}
@@ -3526,7 +3525,7 @@ RectTransform:
   - {fileID: 567063684}
   - {fileID: 699592112}
   m_Father: {fileID: 1331033749}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3602,9 +3601,10 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 2124025623}
   - {fileID: 1302700921}
   m_Father: {fileID: 327460425}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3624,10 +3624,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   container: {fileID: 571901417}
   display: {fileID: 1302700920}
+  cam: {fileID: 1916325131}
+  toggle: {fileID: 2124025624}
   tilePref: {fileID: 1736563819594334, guid: 1e36ee7421d38d94e96cf67b32421712, type: 2}
   playerMarkPref: {fileID: 1517773675353880, guid: c9c55c9e0ebe7484db3b4c32949e7086,
     type: 2}
   tileWidth: 50
+  moveSpd: 150
+  rotSpd: 250
 --- !u!1001 &1353823169
 Prefab:
   m_ObjectHideFlags: 0
@@ -5427,7 +5431,7 @@ RectTransform:
   m_LocalScale: {x: 0.50000006, y: 0.50000006, z: 1}
   m_Children: []
   m_Father: {fileID: 327460425}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -6497,12 +6501,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1409712876}
-  m_Father: {fileID: 327460425}
-  m_RootOrder: 5
+  m_Father: {fileID: 1331033749}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 450, y: 250}
+  m_AnchoredPosition: {x: 140, y: 75}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2124025624
@@ -6547,7 +6551,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1331033750}
         m_MethodName: ToggleMap
         m_Mode: 1
         m_Arguments:

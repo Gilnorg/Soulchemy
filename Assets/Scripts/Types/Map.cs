@@ -31,11 +31,11 @@ public class Map {
             //generate map
             map = new List<List<Tile>>
             {
-                new List<Tile> { new Tile.Path(), new Tile.Path(), new Tile.Path() },
+                new List<Tile> { new Tile(), new Tile.Path(), new Tile() },
 
                 new List<Tile> { new Tile.Start(), new Tile.Path(), new Tile.Path() },
 
-                new List<Tile> { new Tile.Path(), new Tile.Path(), new Tile.Path() }
+                new List<Tile> { new Tile(), new Tile.Path(), new Tile() }
             };
         }
         else

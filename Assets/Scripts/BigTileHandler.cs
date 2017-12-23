@@ -118,6 +118,7 @@ public class BigTileHandler : MonoBehaviour {
             }
         }
 
+        gc.guiC.uiDisabled = false;
     }
 
     void ActivateBigTile(BigTile bigTile, int pos)
@@ -160,10 +161,10 @@ public class BigTileHandler : MonoBehaviour {
                 gc.currentMap.SetCoords(activeTile.coords);
                 gc.guiC.ToggleButtons(gc.guiC.exploringArrows, new string[4]
                 {
-                    gc.currentMap.GetTile(notAxis, rot.y) != null ? "Up" : null,
-                    gc.currentMap.GetTile(notAxis, -rot.y) != null ? "Down" : null,
-                    gc.currentMap.GetTile(currentAxis, rot.x) != null ? "Right" : null,
-                    gc.currentMap.GetTile(currentAxis, -rot.x) != null ? "Left" : null
+                    (gc.currentMap.GetTile(notAxis, rot.y) != null && gc.currentMap.GetTile(notAxis, rot.y).type != TileType.none) ? "Up" : null,
+                    gc.currentMap.GetTile(notAxis, -rot.y) != null && gc.currentMap.GetTile(notAxis, -rot.y).type != TileType.none ? "Down" : null,
+                    gc.currentMap.GetTile(currentAxis, rot.x) != null && gc.currentMap.GetTile(currentAxis, rot.x).type != TileType.none ? "Right" : null,
+                    gc.currentMap.GetTile(currentAxis, -rot.x) != null && gc.currentMap.GetTile(currentAxis, -rot.x).type != TileType.none ? "Left" : null
                 }
                 );
 
@@ -203,7 +204,7 @@ public class BigTileHandler : MonoBehaviour {
                     rot.x = rot.y;
                 }
 
-                gc.mapHandler.RotateMap(new Vector3(0, 0, -90));
+                gc.mapHandler.RotateMap(-90);
             }
         }
 
@@ -220,13 +221,11 @@ public class BigTileHandler : MonoBehaviour {
                     rot.y = rot.x;
                 }
 
-                gc.mapHandler.RotateMap(new Vector3(0, 0, 90));
+                gc.mapHandler.RotateMap(90);
             }
         }
                 
         else return; //no rotation
-
-        print(rot);
     }
 
     // Move Functions
@@ -253,7 +252,8 @@ public class BigTileHandler : MonoBehaviour {
             gc.currentMap.SetCoords(currentCoords, false);
             gc.FadeOut(ToggleAxis);
         }
-        else print(currentCoords);
+
+        gc.guiC.uiDisabled = true;
     }
 
     public void MoveRight()
