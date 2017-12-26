@@ -17,7 +17,7 @@ public class GameController : MonoBehaviour
     public GameObject mainCanvas, battleUnits;
 
     public GUIController guiC;
-    public MapHandler mapHandler;
+    public MiniMapController mapHandler;
     public BigTileHandler bigTileHandler;
 
     public PCController player;

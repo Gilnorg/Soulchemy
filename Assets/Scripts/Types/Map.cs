@@ -33,7 +33,7 @@ public class Map {
             {
                 new List<Tile> { new Tile(), new Tile.Path(), new Tile() },
 
-                new List<Tile> { new Tile.Start(), new Tile.Path(), new Tile.Path() },
+                new List<Tile> { new Tile.Start(), new Tile.Battle(), new Tile.Battle(1) },
 
                 new List<Tile> { new Tile(), new Tile.Path(), new Tile() }
             };
@@ -116,6 +116,10 @@ public class Map {
 
         return activeButtons;
     }
+    public Tile GetTile()
+    {
+        return GetTile(coords);
+    }
 
     public Tile GetTile(int x, int y)
     {
@@ -139,6 +143,11 @@ public class Map {
         }
 
         return null;
+    }
+
+    public Thing GetThing(int index)
+    {
+        return GetTile().things[index];
     }
 
 }

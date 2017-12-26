@@ -36,12 +36,16 @@ public class Battle {
     public Item currentItem = null;
 
     //GETTERS
-    public int Count
+    public int UnitCount
     {
         get { return arena.Count; }
     }
+    public int UnitCountNormal
+    {
+        get { return UnitCount + (UnitCount % 2); }
+    }
 
-    public Entity currentEntity
+    public Entity CurrentEntity
     {
         get { return arena[currentTurn]; }
     }
@@ -132,16 +136,21 @@ public class Battle {
             //end turn
             ApplyStatusEffects(false);
 
-            currentEntity.mov.Reset();
+            CurrentEntity.mov.Reset();
 
             //start new turn
             currentTurn = newCurrentTurn;
 
-            currentEntity.gone = true;
+            if (gc.currentMap.GetThing(CurrentEntity.LocNormal) != null)
+            {
+                gc.currentMap.GetThing(CurrentEntity.LocNormal).DoThing(CurrentEntity);
+            }
+
+            CurrentEntity.gone = true;
 
             ApplyStatusEffects(true);
 
-            currentEntity.animator.Play("Bounce");
+            CurrentEntity.animator.Play("Bounce");
         }
         else //if all enemies have gone, restart
         {
@@ -205,7 +214,7 @@ public class Battle {
     //MOVE ENTITY
     public void Mov(int dist)
     {
-        Mov(currentEntity, dist);
+        Mov(CurrentEntity, dist);
     }
 
     public void Mov(Entity entity, int dist)
@@ -295,7 +304,7 @@ public class Battle {
 
     public void SetLocations()
     {
-        for (int i = 0; i < Count; i++)
+        for (int i = 0; i < UnitCount; i++)
         {
             arena[i].loc = i;
         }
@@ -336,10 +345,10 @@ public class Battle {
             {
                 target = player;
 
-                int LBounds = Mathf.Clamp(target.loc - 1, 0, Count);
-                int UBounds = Mathf.Clamp(target.loc + 1, 0, Count);
+                int LBounds = Mathf.Clamp(target.loc - 1, 0, UnitCount);
+                int UBounds = Mathf.Clamp(target.loc + 1, 0, UnitCount);
 
-                for (int i = 0; i < Count; i++)
+                for (int i = 0; i < UnitCount; i++)
                 {
                     if (i >= LBounds && i <= UBounds
                         && (i <= target.loc - 1 || i >= target.loc + 1))
@@ -354,10 +363,10 @@ public class Battle {
             }
             else
             {
-                int LBounds = Mathf.Clamp(target.loc - currentPlayerAttack.range, 0, Count);
-                int UBounds = Mathf.Clamp(target.loc + currentPlayerAttack.range, 0, Count);
+                int LBounds = Mathf.Clamp(target.loc - currentPlayerAttack.range, 0, UnitCount);
+                int UBounds = Mathf.Clamp(target.loc + currentPlayerAttack.range, 0, UnitCount);
 
-                for (int i = 0; i < Count; i++)
+                for (int i = 0; i < UnitCount; i++)
                 {
                     if (i >= LBounds && i <= UBounds
                         && (i <= target.loc - currentPlayerAttack.deadRange || i >= target.loc + currentPlayerAttack.deadRange))
@@ -379,16 +388,16 @@ public class Battle {
 
         if (start)
         {
-            foreach (StatusEffect statusEffect in currentEntity.statusEffects)
+            foreach (StatusEffect statusEffect in CurrentEntity.statusEffects)
             {
-                statusEffect.StartEffect(currentEntity, statusEffect.dmg);
+                statusEffect.StartEffect(CurrentEntity, statusEffect.dmg);
             }
         }
         else
         {
-            foreach (StatusEffect statusEffect in currentEntity.statusEffects)
+            foreach (StatusEffect statusEffect in CurrentEntity.statusEffects)
             {
-                statusEffect.EndEffect(currentEntity, statusEffect.dmg);
+                statusEffect.EndEffect(CurrentEntity, statusEffect.dmg);
                 statusEffect.timer--;
 
                 if (statusEffect.timer <= 0)
@@ -400,9 +409,9 @@ public class Battle {
 
         foreach (StatusEffect deadEffect in deadEffects)
         {
-            deadEffect.OnRemove(currentEntity, deadEffect.dmg);
+            deadEffect.OnRemove(CurrentEntity, deadEffect.dmg);
 
-            currentEntity.statusEffects.Remove(deadEffect);
+            CurrentEntity.statusEffects.Remove(deadEffect);
         }
     }
 
@@ -410,8 +419,8 @@ public class Battle {
     //Splash Attack
     public void SplashAttack(int target, int dmg, int range = 1, int deadRange = 0)
     {
-        int LBounds = Mathf.Clamp(target - range, 0, Count - 1);
-        int UBounds = Mathf.Clamp(target + range, 0, Count - 1);
+        int LBounds = Mathf.Clamp(target - range, 0, UnitCount - 1);
+        int UBounds = Mathf.Clamp(target + range, 0, UnitCount - 1);
 
         for (int i = LBounds; i <= UBounds; i++)
         {
@@ -425,8 +434,8 @@ public class Battle {
     //Splash Effect
     public void SplashEffect(int target, StatusEffect statusEffect, int range = 1, int deadRange = 0)
     {
-        int LBounds = Mathf.Clamp(target - range, 0, Count - 1);
-        int UBounds = Mathf.Clamp(target + range, 0, Count - 1);
+        int LBounds = Mathf.Clamp(target - range, 0, UnitCount - 1);
+        int UBounds = Mathf.Clamp(target + range, 0, UnitCount - 1);
 
         for (int i = LBounds; i <= UBounds; i++)
         {

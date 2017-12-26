@@ -12,6 +12,8 @@ public class Tile
 
     public bool triggered;
 
+    public Thing[] things = new Thing[6];
+
     public Tile()
     {
         gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();

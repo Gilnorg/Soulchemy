@@ -92,6 +92,9 @@ MonoBehaviour:
   currentAnim: 
   gone: 0
   dead: 0
+  blocking: 0
+  lockedLeft: 0
+  lockedRight: 0
   id: 0
   alliance: 1
   loc: 0

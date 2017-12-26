@@ -85,15 +85,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 661a9d6ae3c7d86469dd84f44df36d20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BasicAttack:
-    priority: 0
-    anim: Attack
   attackReticle: {fileID: 0}
   animator: {fileID: 0}
+  spRenderer: {fileID: 0}
   currentTarget: {fileID: 0}
   currentAnim: 
   gone: 0
   dead: 0
+  blocking: 0
+  lockedLeft: 0
+  lockedRight: 0
   id: 0
   alliance: 0
   loc: 0
@@ -120,7 +121,6 @@ MonoBehaviour:
   spd:
     max: 3
     current: 0
-  spRenderer: {fileID: 0}
 --- !u!212 &212297759700992144
 SpriteRenderer:
   m_ObjectHideFlags: 1

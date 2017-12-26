@@ -52,7 +52,7 @@ public class AIController : Entity
 
     protected void MoveToEntity(Entity target)
     {
-        int dist = -gc.currentBattle.currentEntity.loc - target.loc;
+        int dist = -gc.currentBattle.CurrentEntity.loc - target.loc;
         int dir = (int)Mathf.Sign(dist);
         
         gc.currentBattle.Mov(dist - dir);

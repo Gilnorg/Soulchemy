@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MapHandler : MonoBehaviour {
+public class MiniMapController : MonoBehaviour {
 
     public GameObject container, display, cam;
     public Toggle toggle;

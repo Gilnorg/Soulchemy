@@ -24,7 +24,16 @@ public class Entity : MonoBehaviour
 
     public Alliance alliance;
 
-    public int loc = 0;
+    public int loc;
+    public int LocNormal
+    {
+        get
+        {
+            int normal = gc.currentBattle.UnitCountNormal / 2;
+
+            return (gc.currentMap.GetTile().things.Length / 2) + (loc - normal);
+        }
+    }
     
     [System.Serializable]
     public struct Resource
@@ -99,7 +108,7 @@ public class Entity : MonoBehaviour
     {
         if (gc.state == GameState.inBattle)
         {
-            float x = -((gc.currentBattle.Count-1) * GameController.unitWidth / 2) + loc * GameController.unitWidth;
+            float x = -((gc.currentBattle.UnitCountNormal - 1) * GameController.unitWidth / 2) + (loc * GameController.unitWidth);
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(x, GameController.floorY), 10 * Time.deltaTime);
         }
         else
