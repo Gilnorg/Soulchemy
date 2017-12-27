@@ -6,6 +6,8 @@ public class Thing : MonoBehaviour {
 
     private GameController gc;
 
+    public bool triggered;
+
 	// Use this for initialization
 	void Start () {
         gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
@@ -13,6 +15,6 @@ public class Thing : MonoBehaviour {
 	
     public virtual void DoThing(Entity target)
     {
-        print(target.name);
+        print("ThingFunc " + target.name);
     }
 }

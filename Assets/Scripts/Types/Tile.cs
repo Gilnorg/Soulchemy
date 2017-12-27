@@ -17,6 +17,10 @@ public class Tile
     public Tile()
     {
         gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+
+        things[0] = gc.thingPrefs[0];
+        things[2] = gc.thingPrefs[0];
+        things[4] = gc.thingPrefs[0];
     }
 
     public virtual void Func()

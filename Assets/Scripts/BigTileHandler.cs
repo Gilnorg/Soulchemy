@@ -68,6 +68,21 @@ public class BigTileHandler : MonoBehaviour {
                     bigMap[x].Add(new BigTile(x, y, Instantiate(bigTilePref[Random.Range(0, bigTilePref.Count)], transform)));
                     bigMap[x][y].SetActive(false);
                     bigMap[x][y].gameObject.name += "(" + x + ", " + y + ")";
+
+                    Thing[] things = gc.currentMap.GetTile(bigMap[x][y].coords).things;
+                    int normal = things.Length / 2;
+
+                    for (int i = 0; i < things.Length; i++)
+                    {
+                        if (things[i] != null)
+                        {
+                            Instantiate(
+                                things[i],
+                                bigMap[x][y].transform.position - Vector3.right * (i - normal) * GameController.unitWidth,
+                                bigMap[x][y].transform.rotation, bigMap[x][y].transform
+                                );
+                        }
+                    }
                 }
             }
         }

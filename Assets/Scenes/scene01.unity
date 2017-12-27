@@ -6161,6 +6161,8 @@ MonoBehaviour:
     - {fileID: 1615254743747226, guid: 6724b5074d5854f49b09654b39b6ffa9, type: 2}
   itemSprites:
   - {fileID: 21300000, guid: 3374e1f9561949740b634d284316b9aa, type: 3}
+  thingPrefs:
+  - {fileID: 114939354629792542, guid: b490f22d5468677498cb38d7a8b6584a, type: 2}
 --- !u!4 &1979445805
 Transform:
   m_ObjectHideFlags: 0

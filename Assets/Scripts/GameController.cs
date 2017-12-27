@@ -55,6 +55,7 @@ public class GameController : MonoBehaviour
     public List<List<Item>> inventory = new List<List<Item>>(new List<Item>[30]);
 
     public List<Sprite> itemSprites = new List<Sprite>();
+    public List<Thing> thingPrefs = new List<Thing>();
 
     public Item currentItem = null;
 
