@@ -24,7 +24,7 @@ public class Map {
 
     public Map(List<List<Tile>> newMap = null)
     {
-        gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+        gc = GameController.main;
 
         if (newMap == null)
         {
@@ -145,7 +145,7 @@ public class Map {
         return null;
     }
 
-    public Thing GetThing(int index)
+    public Tile.SetPiece GetSetPiece(int index)
     {
         return GetTile().things[index];
     }

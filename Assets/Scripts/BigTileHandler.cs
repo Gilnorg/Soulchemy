@@ -46,13 +46,10 @@ public class BigTileHandler : MonoBehaviour {
         }
     }
 
-    private void Awake()
-    {
-        gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
-    }
-
     private void Start()
     {
+        gc = GameController.main;
+
         // add a BigTile GameObject to bigMap for each tile in gc.currentMap
         for (int x = 0; x < gc.currentMap.width; x++)
         {
@@ -69,16 +66,16 @@ public class BigTileHandler : MonoBehaviour {
                     bigMap[x][y].SetActive(false);
                     bigMap[x][y].gameObject.name += "(" + x + ", " + y + ")";
 
-                    Thing[] things = gc.currentMap.GetTile(bigMap[x][y].coords).things;
-                    int normal = things.Length / 2;
+                    Tile.SetPiece[] setPieces = gc.currentMap.GetTile(bigMap[x][y].coords).things;
+                    int normal = setPieces.Length / 2;
 
-                    for (int i = 0; i < things.Length; i++)
+                    for (int i = 0; i < setPieces.Length; i++)
                     {
-                        if (things[i] != null)
+                        if (setPieces[i] != null)
                         {
                             Instantiate(
-                                things[i],
-                                bigMap[x][y].transform.position - Vector3.right * (i - normal) * GameController.unitWidth,
+                                setPieces[i].gameObject,
+                                bigMap[x][y].transform.position - Vector3.right * (i - normal - 0.5f) * GameController.unitWidth,
                                 bigMap[x][y].transform.rotation, bigMap[x][y].transform
                                 );
                         }

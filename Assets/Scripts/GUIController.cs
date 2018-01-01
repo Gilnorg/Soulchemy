@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class GUIController : MonoBehaviour {
 
-    public GameController gc;
+    private GameController gc;
 
     public Text debugTxt;
 
@@ -14,6 +14,11 @@ public class GUIController : MonoBehaviour {
     public GameObject exploringArrows, playerFunctions;
 
     public bool uiDisabled = false;
+
+    private void Start()
+    {
+        gc = GameController.main;
+    }
 
     private void OnGUI()
     {

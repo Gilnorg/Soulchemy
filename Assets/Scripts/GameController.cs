@@ -9,6 +9,8 @@ public delegate void Empty();
 
 public class GameController : MonoBehaviour
 {
+    public static GameController main;
+
     public const float floorY = 1.5f;
     public const float unitWidth = 2.1f;
 
@@ -55,7 +57,7 @@ public class GameController : MonoBehaviour
     public List<List<Item>> inventory = new List<List<Item>>(new List<Item>[30]);
 
     public List<Sprite> itemSprites = new List<Sprite>();
-    public List<Thing> thingPrefs = new List<Thing>();
+    public List<GameObject> setPiecePrefs = new List<GameObject>();
 
     public Item currentItem = null;
 
@@ -69,6 +71,8 @@ public class GameController : MonoBehaviour
     // Use this for initialization
     private void Awake()
     {
+        main = this;
+
         currentMap = new Map();
 
         blackOutAnimator = blackOut.GetComponent<Animator>();
@@ -102,7 +106,7 @@ public class GameController : MonoBehaviour
         {
             if (!currentBattle.set)
             {
-                currentBattle = new Battle(this, battles[battle].enemies);
+                currentBattle = new Battle(battles[battle].enemies);
             }
 
             yield return 0;

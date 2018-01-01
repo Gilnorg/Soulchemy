@@ -12,20 +12,38 @@ public class Tile
 
     public bool triggered;
 
-    public Thing[] things = new Thing[6];
+    public SetPiece[] things = new SetPiece[6];
 
     public Tile()
     {
-        gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+        gc = GameController.main;
 
-        things[0] = gc.thingPrefs[0];
-        things[2] = gc.thingPrefs[0];
-        things[4] = gc.thingPrefs[0];
+        //things[0] = new SetPiece(gc.setPiecePrefs[0]);
+        things[1] = new SetPiece(gc.setPiecePrefs[0]);
+        //things[2] = new SetPiece(gc.setPiecePrefs[0]);
+        things[3] = new SetPiece(gc.setPiecePrefs[0]);
+        //things[4] = new SetPiece(gc.setPiecePrefs[0]);
+        things[5] = new SetPiece(gc.setPiecePrefs[0]);
     }
 
     public virtual void Func()
     {
         triggered = true;
+    }
+
+    public class SetPiece
+    {
+        public GameObject gameObject;
+
+        public SetPiece(GameObject newGM)
+        {
+            gameObject = newGM;
+        }
+
+        public virtual void Func(Entity target)
+        {
+            Debug.Log("???");
+        }
     }
 
     public class Path : Tile

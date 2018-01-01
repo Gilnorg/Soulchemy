@@ -24,7 +24,7 @@ public class Battle {
 
     public bool set = false;
     public bool triggered = false;
-    public int currentTurn = 0;
+    public int currentTurn = -1;
 
     public Entity player, companion;
 
@@ -57,11 +57,11 @@ public class Battle {
         
     }
 
-    public Battle(GameController newGC, List<GameObject> enemies)
+    public Battle(List<GameObject> enemies)
     {
         set = true;
 
-        gc = newGC;
+        gc = GameController.main;
 
         player = gc.player;
         companion = gc.companion;
@@ -134,18 +134,20 @@ public class Battle {
         if (newCurrentTurn != -1)
         {
             //end turn
-            ApplyStatusEffects(false);
+            if (currentTurn != -1)
+            {
+                ApplyStatusEffects(false);
 
-            CurrentEntity.mov.Reset();
+                CurrentEntity.mov.Reset();
+
+                if (gc.currentMap.GetSetPiece(CurrentEntity.LocNormal) != null)
+                {
+                    gc.currentMap.GetSetPiece(CurrentEntity.LocNormal).Func(CurrentEntity);
+                }
+            }
 
             //start new turn
             currentTurn = newCurrentTurn;
-
-            if (gc.currentMap.GetThing(CurrentEntity.LocNormal) != null)
-            {
-                gc.currentMap.GetThing(CurrentEntity.LocNormal).DoThing(CurrentEntity);
-            }
-
             CurrentEntity.gone = true;
 
             ApplyStatusEffects(true);
