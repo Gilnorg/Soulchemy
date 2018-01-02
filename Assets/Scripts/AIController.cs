@@ -52,10 +52,11 @@ public class AIController : Entity
 
     protected void MoveToEntity(Entity target)
     {
-        int dist = -gc.currentBattle.CurrentEntity.loc - target.loc;
+        int dist = loc - target.loc;
         int dir = (int)Mathf.Sign(dist);
-        
-        gc.currentBattle.Mov(dist - dir);
+
+        print(dist - dir);
+        gc.currentBattle.Mov(-(dist - dir));
     }
 
     protected List<AttackContainer> lastAtk = new List<AttackContainer>();

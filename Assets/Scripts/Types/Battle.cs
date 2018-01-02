@@ -67,10 +67,12 @@ public class Battle {
         companion = gc.companion;
 
         //copy enemies
-        foreach (GameObject enemy in enemies)
+        int friendlies = companion != null ? 2 : 1;
+
+        for (int i = 0; i < enemies.Count && i < 6 - friendlies; i++)
         {
-            var newEnemy = Object.Instantiate(enemy, gc.battleUnits.transform);
-            newEnemy.name = enemy.name;
+            var newEnemy = Object.Instantiate(enemies[i], gc.battleUnits.transform);
+            newEnemy.name = enemies[i].name;
             newEnemy.transform.position = new Vector3(0, GameController.floorY);
 
             newEnemy.SetActive(false);
@@ -174,7 +176,6 @@ public class Battle {
             if (entity.alliance != Alliance.friendly)
             {
                 Object.Destroy(entity.gameObject);
-                Object.Destroy(entity.healthBar);
                 arena.Remove(entity);
                 set = false;
                 Win();
@@ -301,7 +302,7 @@ public class Battle {
         SetLocations();
         currentTurn += dist;
 
-        entity.mov.current -= Mathf.Abs(dist);
+        entity.mov.current--;
     }
 
     public void SetLocations()

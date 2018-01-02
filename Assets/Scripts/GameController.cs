@@ -28,8 +28,11 @@ public class GameController : MonoBehaviour
     public float center;
 
     public GameObject attackReticle, noAttackReticle,
-        healthBar,
         defaultVisEffect, blackOut;
+
+    public GameObject healthBar, movPip;
+
+    public Rect movPipRect;
 
     private Animator blackOutAnimator;
     

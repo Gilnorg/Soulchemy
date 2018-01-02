@@ -18,7 +18,9 @@ public class Entity : MonoBehaviour
     public Empty currentAttack;
     public string currentAnim;
 
-    public bool gone, dead, blocking, lockedLeft, lockedRight;
+    public bool gone, dead;
+
+    public bool blocking, lockedLeft, lockedRight;
 
     public int id;
 
@@ -38,7 +40,10 @@ public class Entity : MonoBehaviour
     [System.Serializable]
     public struct Resource
     {
-        public int trueMax, max, current;
+        public int trueMax;
+        
+        public int max;
+        public int current;
 
         public void TrueReset()
         {
@@ -53,13 +58,19 @@ public class Entity : MonoBehaviour
 
     public Resource hp, mov, lust;
 
-    public GameObject healthBar;
+    private GameObject healthBar;
+
+    private Transform healthDisplay;
+    private List<GameObject> movPips = new List<GameObject>();
+    private Text healthText;
+
     public float healthBarPos = 2.2f;
 
     [System.Serializable]
     public struct Stat
     {
-        public int max, current;
+        public int max;
+        public int current;
 
         public void Reset()
         {
@@ -67,7 +78,7 @@ public class Entity : MonoBehaviour
         }
     }
 
-    public Stat atk, def, spd;
+    public Stat atk, def, spd, resFire, resSound, resSalt, resSilver;
 
     public List<StatusEffect> statusEffects = new List<StatusEffect>();
 
@@ -97,11 +108,31 @@ public class Entity : MonoBehaviour
         def.Reset();
         spd.Reset();
 
+        resFire.Reset();
+        resSound.Reset();
+        resSalt.Reset();
+        resSilver.Reset();
+
         attackReticle = Instantiate(gc.attackReticle, transform, false);
         attackReticle.SetActive(false);
 
         healthBar = Instantiate(gc.healthBar, gc.mainCanvas.transform);
-        healthBar.name = "HealthBar(" + name + id + ")";
+        healthBar.name = "HealthBar";
+
+        healthDisplay = healthBar.transform.FindChild("Health");
+        healthText = healthBar.transform.FindChild("Text").GetComponent<Text>();
+
+        for (int i = 0; i < 99; i++)
+        {
+            var movPip = Instantiate(gc.movPip, healthBar.transform.Find("MovPips"));
+
+            if (i >= mov.current)
+            {
+                movPip.SetActive(false);
+            }
+
+            movPips.Add(movPip);
+        }
     }
 
     public void Update()
@@ -120,24 +151,77 @@ public class Entity : MonoBehaviour
         UpdateHealthBar();
     }
 
-    protected void UpdateHealthBar()
+    private void UpdateHealthBar()
     {
         healthBar.transform.position = transform.position + Vector3.up * healthBarPos;
+        
+        healthDisplay.localScale = new Vector3(hp.current / (float)hp.max, 1);
+        
+        healthText.text = "HP: " + hp.current;
 
-        var health = healthBar.transform.Find("Health");
-        health.localScale = new Vector3(hp.current / (float)hp.max, 1);
+        for (int i = 0; i < movPips.Count; i++)
+        {
+            var movPip = movPips[i];
 
-        var text = healthBar.transform.Find("Text").GetComponent<Text>();
-        text.text = "HP: " + hp.current;
+            if (movPip.activeSelf)
+            {
+                movPip.transform.position = healthBar.transform.position;
+                movPip.transform.position -= new Vector3(-gc.movPipRect.width * i - gc.movPipRect.x, gc.movPipRect.y);
+
+            }
+
+            if (i < mov.current)
+            {
+                movPip.SetActive(true);
+            }
+            else
+            {
+                movPip.SetActive(false);
+            }
+        }
+    }
+
+    public void OnDestroy()
+    {
+        Destroy(healthBar);
     }
 
     public virtual void Move()
     {
-
+        Advance();
     }
     
-    public virtual void Hurt(int dmg, Entity attacker = null)
+    public Stat GetResistance(string res)
     {
+        switch (res)
+        {
+            default:
+                Debug.LogError("Bad resistance " + res);
+                return def;
+
+            case "normal":
+                return def;
+
+            case "fire":
+                return resFire;
+
+            case "sound":
+                return resSound;
+
+            case "salt":
+                return resSalt;
+
+            case "silver":
+                return resSilver;
+        }
+    }
+
+    public virtual void Hurt(int dmg, string dmgType = "normal", Entity attacker = null)
+    {
+        int res = GetResistance(dmgType).current;
+
+        dmg = (int) Mathf.Round((100 - res) / 100 * dmg);
+
         hp.current = Mathf.Clamp(hp.current - dmg, 0, hp.max);
         if (hp.current <= 0)
         {
@@ -207,10 +291,12 @@ public class Entity : MonoBehaviour
         if (target.loc < loc)
         {
             target.spRenderer.flipX = false;
+            spRenderer.flipX = true;
         }
         else if (target.loc > loc)
         {
             target.spRenderer.flipX = true;
+            spRenderer.flipX = false;
         }
     }
 
@@ -239,6 +325,6 @@ public class Entity : MonoBehaviour
     // Attack Prefs
     public void HurtTarget()
     {
-        currentTarget.Hurt(atk.current, this);
+        currentTarget.Hurt(atk.current, "normal",  this);
     }
 }

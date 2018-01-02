@@ -42,7 +42,7 @@ public class Tile
 
         public virtual void Func(Entity target)
         {
-            Debug.Log("???");
+            
         }
     }
 
