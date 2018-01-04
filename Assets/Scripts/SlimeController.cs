@@ -32,7 +32,7 @@ public class SlimeController : AIController {
         }
         else
         {
-            List<Entity> adjacent = GetAdjacent();
+            List<Entity> adjacent = GetAdjacentEnemies();
 
             if (adjacent.Count > 0)
             {
@@ -46,6 +46,7 @@ public class SlimeController : AIController {
             }
         }
 
+        FaceTarget(currentTarget);
         FaceMe(currentTarget);
 
         PlayAttack();

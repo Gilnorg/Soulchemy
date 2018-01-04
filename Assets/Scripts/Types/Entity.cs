@@ -78,7 +78,7 @@ public class Entity : MonoBehaviour
         }
     }
 
-    public Stat atk, def, spd, resFire, resSound, resSalt, resSilver;
+    public Stat atk, def, spd, movRegen, resFire, resSound, resSalt, resSilver;
 
     public List<StatusEffect> statusEffects = new List<StatusEffect>();
 
@@ -107,6 +107,7 @@ public class Entity : MonoBehaviour
         atk.Reset();
         def.Reset();
         spd.Reset();
+        movRegen.Reset();
 
         resFire.Reset();
         resSound.Reset();
@@ -218,9 +219,11 @@ public class Entity : MonoBehaviour
 
     public virtual void Hurt(int dmg, string dmgType = "normal", Entity attacker = null)
     {
+        animator.Play("Hurt");
+
         int res = GetResistance(dmgType).current;
 
-        dmg = (int) Mathf.Round((100 - res) / 100 * dmg);
+        dmg = (int) Mathf.Round((100f - res) / 100 * dmg);
 
         hp.current = Mathf.Clamp(hp.current - dmg, 0, hp.max);
         if (hp.current <= 0)
@@ -291,16 +294,26 @@ public class Entity : MonoBehaviour
         if (target.loc < loc)
         {
             target.spRenderer.flipX = false;
-            spRenderer.flipX = true;
         }
         else if (target.loc > loc)
         {
             target.spRenderer.flipX = true;
+        }
+    }
+
+    protected void FaceTarget(Entity target)
+    {
+        if (target.loc < loc)
+        {
+            spRenderer.flipX = true;
+        }
+        else if (target.loc > loc)
+        {
             spRenderer.flipX = false;
         }
     }
 
-    protected List<Entity> GetAdjacent()
+    protected List<Entity> GetAdjacentEnemies()
     {
         List<Entity> adjacent = new List<Entity>();
 
@@ -316,6 +329,7 @@ public class Entity : MonoBehaviour
 
         return adjacent;
     }
+
     protected bool IsAdjacent(Entity target)
     {
         return Mathf.Abs(loc - target.loc) <= 1;

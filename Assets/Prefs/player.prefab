@@ -99,7 +99,7 @@ MonoBehaviour:
   alliance: 0
   loc: 0
   hp:
-    trueMax: 10
+    trueMax: 15
     max: 0
     current: 0
   mov:
@@ -110,16 +110,30 @@ MonoBehaviour:
     trueMax: 10
     max: 0
     current: 0
-  healthBar: {fileID: 0}
   healthBarPos: 2.2
   atk:
     max: 5
     current: 0
   def:
-    max: 0
+    max: 15
     current: 0
   spd:
-    max: 3
+    max: 2
+    current: 0
+  movRegen:
+    max: 2
+    current: 0
+  resFire:
+    max: 0
+    current: 0
+  resSound:
+    max: 0
+    current: 0
+  resSalt:
+    max: 0
+    current: 0
+  resSilver:
+    max: 0
     current: 0
 --- !u!212 &212297759700992144
 SpriteRenderer:

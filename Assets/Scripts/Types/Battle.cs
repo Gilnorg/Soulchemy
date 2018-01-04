@@ -140,7 +140,7 @@ public class Battle {
             {
                 ApplyStatusEffects(false);
 
-                CurrentEntity.mov.Reset();
+                CurrentEntity.mov.current = Mathf.Clamp(CurrentEntity.mov.current + CurrentEntity.movRegen.current, 0, CurrentEntity.mov.max);
 
                 if (gc.currentMap.GetSetPiece(CurrentEntity.LocNormal) != null)
                 {
@@ -222,11 +222,15 @@ public class Battle {
 
     public void Mov(Entity entity, int dist)
     {
-        int dir = (int)Mathf.Sign(dist);
-        
         dist = Mathf.Clamp(dist, -entity.loc, arena.Count - entity.loc - 1);
 
         if (dist == 0) return;
+        
+
+        int dir = (int)Mathf.Sign(dist);
+
+        if (dir > 0) entity.spRenderer.flipX = false;
+        else entity.spRenderer.flipX = true;
 
         for (int i = 0; Mathf.Abs(i) < Mathf.Abs(dist); i += dir)
         {

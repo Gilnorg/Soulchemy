@@ -55,7 +55,8 @@ public class AIController : Entity
         int dist = loc - target.loc;
         int dir = (int)Mathf.Sign(dist);
 
-        print(dist - dir);
+        print(-(dist - dir));
+
         gc.currentBattle.Mov(-(dist - dir));
     }
 

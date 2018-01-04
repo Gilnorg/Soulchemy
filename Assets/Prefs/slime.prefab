@@ -99,26 +99,40 @@ MonoBehaviour:
   alliance: 1
   loc: 0
   hp:
-    trueMax: 10
+    trueMax: 5
     max: 0
     current: 0
   mov:
-    trueMax: 1
+    trueMax: 2
     max: 0
     current: 0
   lust:
-    trueMax: 0
+    trueMax: 3
     max: 0
     current: 0
-  healthBar: {fileID: 0}
   healthBarPos: -0.5
   atk:
-    max: 3
+    max: 2
     current: 0
   def:
     max: 0
     current: 0
   spd:
+    max: 3
+    current: 0
+  movRegen:
+    max: 1
+    current: 0
+  resFire:
+    max: -50
+    current: 0
+  resSound:
+    max: 75
+    current: 0
+  resSalt:
+    max: -25
+    current: 0
+  resSilver:
     max: 0
     current: 0
   atkVariety: 3
