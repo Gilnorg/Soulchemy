@@ -1,12 +1,9 @@
 fileFormatVersion: 2
-guid: 7c2d15a711ed3a94e99611f46486c006
-timeCreated: 1512150025
+guid: 228cb9cd371beac458c82b9d18f84c66
+timeCreated: 1515094788
 licenseType: Free
 TextureImporter:
-  fileIDToRecycleName:
-    21300000: slime_0
-    21300002: slime_1
-    21300004: slime_2
+  fileIDToRecycleName: {}
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -41,7 +38,7 @@ TextureImporter:
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 9
-  spritePivot: {x: 0.5, y: 2.2}
+  spritePivot: {x: 0.5, y: 1}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spritePixelsToUnits: 100
   alphaUsage: 1
@@ -95,46 +92,7 @@ TextureImporter:
     overridden: 0
   spriteSheet:
     serializedVersion: 2
-    sprites:
-    - serializedVersion: 2
-      name: slime_0
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 704
-        height: 551
-      alignment: 9
-      pivot: {x: 0.5, y: 0.9}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: slime_1
-      rect:
-        serializedVersion: 2
-        x: 704
-        y: 0
-        width: 704
-        height: 551
-      alignment: 9
-      pivot: {x: 0.5, y: 0.9}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: slime_2
-      rect:
-        serializedVersion: 2
-        x: 1408
-        y: 0
-        width: 704
-        height: 551
-      alignment: 9
-      pivot: {x: 0.5, y: 0.9}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
+    sprites: []
     outline: []
   spritePackingTag: 
   userData: 
