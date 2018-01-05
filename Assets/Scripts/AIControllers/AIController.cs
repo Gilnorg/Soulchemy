@@ -64,12 +64,17 @@ public class AIController : Entity
 
     protected AttackContainer PickRandomAttack(params AttackContainer[] attacks)
     {
+        return PickRandomAttack(attacks);
+    }
+
+    protected AttackContainer PickRandomAttack(List<AttackContainer> attacks)
+    {
         int chance = Random.Range(0, 100);
 
         float lowestPriority = 100;
         AttackContainer chosenAttack = attacks[0];
 
-        for (int i = 0; i < attacks.Length; i++)
+        for (int i = 0; i < attacks.Count; i++)
         {
             var attack = attacks[i];
 

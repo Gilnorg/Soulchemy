@@ -8,19 +8,20 @@ public enum Alliance { friendly, hostile };
 public class Entity : MonoBehaviour
 {
     protected GameController gc;
-    public GameObject attackReticle;
-    public Animator animator;
 
-    public SpriteRenderer spRenderer;
+    [HideInInspector] public GameObject attackReticle;
+    [HideInInspector] public Animator animator;
+
+    [HideInInspector] public SpriteRenderer spRenderer;
     protected BoxCollider2D box2d;
 
-    public Entity currentTarget;
+    [HideInInspector] public Entity currentTarget;
     public Empty currentAttack;
-    public string currentAnim;
+    [HideInInspector] public string currentAnim;
 
     public bool gone, dead;
 
-    public bool blocking, lockedLeft, lockedRight;
+    public bool blockingLeft, blockingRight, lockedLeft, lockedRight;
 
     public int id;
 

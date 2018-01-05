@@ -9,46 +9,46 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1615254743747226}
+  m_RootGameObject: {fileID: 1253288687560622}
   m_IsPrefabParent: 1
---- !u!1 &1615254743747226
+--- !u!1 &1253288687560622
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4601946571017516}
-  - component: {fileID: 212701830421751690}
-  - component: {fileID: 61381965769627582}
-  - component: {fileID: 95478705110784042}
-  - component: {fileID: 114797598081872320}
+  - component: {fileID: 4799276623681640}
+  - component: {fileID: 212600558612282200}
+  - component: {fileID: 61567830128545550}
+  - component: {fileID: 95204809094376906}
+  - component: {fileID: 114496326813521610}
   m_Layer: 0
-  m_Name: slime
+  m_Name: arborgardGolem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4601946571017516
+--- !u!4 &4799276623681640
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1615254743747226}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_GameObject: {fileID: 1253288687560622}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.41, y: 1.62, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &61381965769627582
+--- !u!61 &61567830128545550
 BoxCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1615254743747226}
+  m_GameObject: {fileID: 1253288687560622}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
@@ -57,16 +57,16 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0.6}
   serializedVersion: 2
   m_Size: {x: 4.3652687, y: 10.698474}
---- !u!95 &95478705110784042
+--- !u!95 &95204809094376906
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1615254743747226}
+  m_GameObject: {fileID: 1253288687560622}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: a6e4fa2a67e5ac142814a46a2f28f495, type: 2}
+  m_Controller: {fileID: 9100000, guid: 7c868344b0d9507498bbd70fd0a96510, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -74,15 +74,15 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &114797598081872320
+--- !u!114 &114496326813521610
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1615254743747226}
+  m_GameObject: {fileID: 1253288687560622}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5661f156c8eebd4b9e5fe67e3853b3e, type: 3}
+  m_Script: {fileID: 11500000, guid: 3743098a64ac58f4d91a1be737a3bfee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   attackReticle: {fileID: 0}
@@ -92,63 +92,68 @@ MonoBehaviour:
   currentAnim: 
   gone: 0
   dead: 0
-  blocking: 0
+  blockingLeft: 0
+  blockingRight: 0
   lockedLeft: 0
   lockedRight: 0
   id: 0
   alliance: 1
   loc: 0
   hp:
-    trueMax: 5
+    trueMax: 1
     max: 0
     current: 0
   mov:
-    trueMax: 2
+    trueMax: 0
     max: 0
     current: 0
   lust:
-    trueMax: 3
+    trueMax: 0
     max: 0
     current: 0
-  healthBarPos: -0.5
+  healthBarPos: 2.2
   atk:
-    max: 2
+    max: 0
     current: 0
   def:
     max: 0
     current: 0
   spd:
-    max: 3
+    max: 50
     current: 0
   movRegen:
-    max: 1
+    max: 0
     current: 0
   resFire:
-    max: -50
+    max: 0
     current: 0
   resSound:
-    max: 75
+    max: 0
     current: 0
   resSalt:
-    max: -25
+    max: 0
     current: 0
   resSilver:
     max: 0
     current: 0
-  atkVariety: 3
-  atkVarietyPercent: 0.5
+  atkVariety: 0
+  atkVarietyPercent: 0
   BasicAttack:
-    priority: 75
+    priority: 0
     anim: 
-  SlimeAttack:
-    priority: 50
-    anim: Slime
---- !u!212 &212701830421751690
+  SplashHeal:
+    priority: 0
+    anim: Cast
+  SummonTotem:
+    priority: 0
+    anim: Cast
+  minHPPercent: 0
+--- !u!212 &212600558612282200
 SpriteRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1615254743747226}
+  m_GameObject: {fileID: 1253288687560622}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -174,7 +179,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 7c2d15a711ed3a94e99611f46486c006, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2a4a4d219d6fd054fb10e200d141e41c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

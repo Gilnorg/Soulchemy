@@ -6157,12 +6157,7 @@ MonoBehaviour:
   - name: Slimes
     chance: 0
     enemies:
-    - {fileID: 1615254743747226, guid: 6724b5074d5854f49b09654b39b6ffa9, type: 2}
-    - {fileID: 1615254743747226, guid: 6724b5074d5854f49b09654b39b6ffa9, type: 2}
-    - {fileID: 1615254743747226, guid: 6724b5074d5854f49b09654b39b6ffa9, type: 2}
-    - {fileID: 1615254743747226, guid: 6724b5074d5854f49b09654b39b6ffa9, type: 2}
-    - {fileID: 1615254743747226, guid: 6724b5074d5854f49b09654b39b6ffa9, type: 2}
-    - {fileID: 1615254743747226, guid: 6724b5074d5854f49b09654b39b6ffa9, type: 2}
+    - {fileID: 1253288687560622, guid: c9ecd9d6001e59449a0c58748d839d8c, type: 2}
   itemSprites:
   - {fileID: 21300000, guid: 3374e1f9561949740b634d284316b9aa, type: 3}
   setPiecePrefs:

@@ -237,7 +237,7 @@ public class Battle {
             Entity checkEntity = arena[entity.loc + dir];
 
             // if nothing is in the way...
-            if (!checkEntity.blocking && !checkEntity.lockedLeft && !checkEntity.lockedRight)
+            if (!IsEntityBlocked(entity, checkEntity) && !checkEntity.lockedLeft && !checkEntity.lockedRight)
             {
                 if (entity.mov.current >= 1)
                     MovForwards(entity, dir);
@@ -245,7 +245,7 @@ public class Battle {
             }
 
             // if enemy is not blocking...
-            else if (!checkEntity.blocking)
+            else if (!IsEntityBlocked(entity, checkEntity))
             {
                 int lockStep = dir;
 
@@ -288,6 +288,13 @@ public class Battle {
                 }
             }
         }
+    }
+
+    private bool IsEntityBlocked(Entity checker, Entity target)
+    {
+        return  ( checker.loc < target.loc && target.blockingLeft )
+            ||
+                ( checker.loc > target.loc && target.blockingRight );
     }
 
     private void MovForwards(Entity entity, int dist)
