@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum Alliance { friendly, hostile };
+public enum Alliance { friendly, hostile, guardian };
 
 public class Entity : MonoBehaviour
 {
@@ -12,7 +12,7 @@ public class Entity : MonoBehaviour
     [HideInInspector] public GameObject attackReticle;
     [HideInInspector] public Animator animator;
 
-    [HideInInspector] public SpriteRenderer spRenderer;
+    public SpriteRenderer spRenderer;
     protected BoxCollider2D box2d;
 
     [HideInInspector] public Entity currentTarget;
@@ -32,19 +32,21 @@ public class Entity : MonoBehaviour
     {
         get
         {
-            int normal = gc.currentBattle.UnitCountNormal / 2;
+            int normal = gc.battle.UnitCountNormal / 2;
 
-            return (gc.currentMap.GetTile().things.Length / 2) + (loc - normal);
+            return (gc.currentMap.GetTile().setPieces.Length / 2) + (loc - normal);
         }
     }
-    
+
+    public float healthBarPos = 2.2f;
+
     [System.Serializable]
     public struct Resource
     {
         public int trueMax;
-        
-        public int max;
-        public int current;
+
+        [HideInInspector] public int max;
+        [HideInInspector] public int current;
 
         public void TrueReset()
         {
@@ -65,13 +67,11 @@ public class Entity : MonoBehaviour
     private List<GameObject> movPips = new List<GameObject>();
     private Text healthText;
 
-    public float healthBarPos = 2.2f;
-
     [System.Serializable]
     public struct Stat
     {
         public int max;
-        public int current;
+        [HideInInspector] public int current;
 
         public void Reset()
         {
@@ -92,8 +92,7 @@ public class Entity : MonoBehaviour
     public void Awake()
     {
         gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
-
-        spRenderer = GetComponent<SpriteRenderer>();
+        
         box2d = GetComponent<BoxCollider2D>();
         animator = GetComponent<Animator>();
 
@@ -141,7 +140,7 @@ public class Entity : MonoBehaviour
     {
         if (gc.state == GameState.inBattle)
         {
-            float x = -((gc.currentBattle.UnitCountNormal - 1) * GameController.unitWidth / 2) + (loc * GameController.unitWidth);
+            float x = -((gc.battle.UnitCountNormal - 1) * GameController.unitWidth / 2) + (loc * GameController.unitWidth);
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(x, GameController.floorY), 10 * Time.deltaTime);
         }
         else
@@ -220,9 +219,15 @@ public class Entity : MonoBehaviour
 
     public virtual void Hurt(int dmg, string dmgType = "normal", Entity attacker = null)
     {
-        animator.Play("Hurt");
+        PlayAnim("Hurt");
 
         int res = GetResistance(dmgType).current;
+
+        if (res > 100)
+        {
+            Heal(dmg, dmgType, attacker);
+            return;
+        }
 
         dmg = (int) Mathf.Round((100f - res) / 100 * dmg);
 
@@ -238,6 +243,23 @@ public class Entity : MonoBehaviour
         }
     }
 
+    public virtual void Heal(int heal, string healType = "normal", Entity healer = null)
+    {
+        PlayAnim("Hurt");
+
+        var res = GetResistance(healType).current;
+
+        if (res < 0)
+        {
+            Hurt(heal, healType, healer);
+            return;
+        }
+        
+        heal = (int)Mathf.Round((100f - res) / 100 * heal);
+
+        hp.current = Mathf.Clamp(hp.current + heal, 0, hp.max);
+    }
+
     public void SetAttack(Empty newAttack, string newAnim)
     {
         currentAttack = newAttack;
@@ -246,7 +268,14 @@ public class Entity : MonoBehaviour
 
     public void PlayAttack()
     {
-        animator.Play(currentAnim);
+        if (currentAnim == "")
+        {
+            PlayAnim("Attack");
+        }
+        else
+        {
+            PlayAnim(currentAnim);
+        }
         // animation runs currentAttack func
     }
 
@@ -266,14 +295,15 @@ public class Entity : MonoBehaviour
 
     public void Advance()
     {
-        gc.currentBattle.Advance();
+        PlayAnim("Idle");
+        gc.battle.Advance();
     }
 
     protected void OnMouseEnter()
     {
-        if (gc.currentBattle.state == BattleState.playerTurn)
+        if (gc.battle.state == BattleState.playerTurn)
         {
-            gc.currentBattle.AttackPreview(this);
+            gc.battle.AttackPreview(this);
 
             FaceMe(gc.player);
         }
@@ -281,12 +311,12 @@ public class Entity : MonoBehaviour
 
     protected void OnMouseDown()
     {
-        if (gc.currentBattle.state == BattleState.playerTurn
-            && gc.currentBattle.currentPlayerAttack != null
+        if (gc.battle.state == BattleState.playerTurn
+            && gc.battle.currentPlayerAttack != null
             && attackReticle.activeSelf)
         {
             gc.player.PlayAttack(this);
-            gc.currentBattle.NullCurrentAttackPreview();
+            gc.battle.NullCurrentAttackPreview();
         }
     }
 
@@ -318,22 +348,22 @@ public class Entity : MonoBehaviour
     {
         List<Entity> adjacent = new List<Entity>();
 
-        if (loc > 0 && gc.currentBattle.arena[loc - 1].alliance != alliance)
+        if (loc > 0 && gc.battle.arena[loc - 1].alliance != alliance)
         {
-            adjacent.Add(gc.currentBattle.arena[loc - 1]);
+            adjacent.Add(gc.battle.arena[loc - 1]);
         }
 
-        if (loc < gc.currentBattle.arena.Count - 1 && gc.currentBattle.arena[loc + 1].alliance != alliance)
+        if (loc < gc.battle.arena.Count - 1 && gc.battle.arena[loc + 1].alliance != alliance)
         {
-            adjacent.Add(gc.currentBattle.arena[loc + 1]);
+            adjacent.Add(gc.battle.arena[loc + 1]);
         }
 
         return adjacent;
     }
 
-    protected bool IsAdjacent(Entity target)
+    protected bool IsInRange(Entity target, int range = 1)
     {
-        return Mathf.Abs(loc - target.loc) <= 1;
+        return Mathf.Abs(loc - target.loc) <= range;
     }
 
 
@@ -341,5 +371,16 @@ public class Entity : MonoBehaviour
     public void HurtTarget()
     {
         currentTarget.Hurt(atk.current, "normal",  this);
+    }
+
+    public bool PlayAnim(string anim)
+    {
+        if (animator != null)
+        {
+            animator.Play(anim);
+            return true;
+        }
+
+        return false;
     }
 }

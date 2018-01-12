@@ -20,71 +20,22 @@ public class BigTileHandler : MonoBehaviour {
 
     public List<GameObject> bigTilePref = new List<GameObject>();
 
-    List<List<BigTile>> bigMap = new List<List<BigTile>>();
-
-    private class BigTile
-    {
-        public IntVector2 coords;
-        public GameObject gameObject;
-        public Transform transform;
-
-        public BigTile(int x, int y, GameObject newGameObject)
-        {
-            coords = new IntVector2(x, y);
-            gameObject = newGameObject;
-            transform = gameObject.transform;
-        }
-
-        public void SetActive(bool active)
-        {
-            gameObject.SetActive(active);
-        }
-
-        public bool activeSelf
-        {
-            get { return gameObject.activeSelf; }
-        }
-    }
-
     private void Start()
     {
         gc = GameController.main;
 
-        // add a BigTile GameObject to bigMap for each tile in gc.currentMap
-        for (int x = 0; x < gc.currentMap.width; x++)
-        {
-            bigMap.Add(new List<BigTile>());
-            for (int y = 0; y < gc.currentMap.height; y++)
-            {
-                if (gc.currentMap.GetTile(x, y).type == TileType.none)
-                {
-                    bigMap[x].Add(null);
-                }
-                else
-                {
-                    bigMap[x].Add(new BigTile(x, y, Instantiate(bigTilePref[Random.Range(0, bigTilePref.Count)], transform)));
-                    bigMap[x][y].SetActive(false);
-                    bigMap[x][y].gameObject.name += "(" + x + ", " + y + ")";
-
-                    Tile.SetPiece[] setPieces = gc.currentMap.GetTile(bigMap[x][y].coords).things;
-                    int normal = setPieces.Length / 2;
-
-                    for (int i = 0; i < setPieces.Length; i++)
-                    {
-                        if (setPieces[i] != null)
-                        {
-                            Instantiate(
-                                setPieces[i].gameObject,
-                                bigMap[x][y].transform.position - Vector3.right * (i - normal - 0.5f) * GameController.unitWidth,
-                                bigMap[x][y].transform.rotation, bigMap[x][y].transform
-                                );
-                        }
-                    }
-                }
-            }
-        }
-
         SetAxis(Axis.x);
+    }
+
+    public IEnumerator SpawnSetPiece(GameObject setPiece, int x, int y, int loc)
+    {
+        GameObject instantiatedSetPiece = Instantiate(setPiece, gc.currentMap.GetTile(x, y).transform);
+
+        yield return 0;
+
+        SetPiece instantiatedSetPieceComponent = instantiatedSetPiece.GetComponent<SetPiece>();
+
+        gc.currentMap.GetTile(x, y).setPieces[loc] = instantiatedSetPieceComponent;
     }
 
     // swap axis between vertical and horizontal
@@ -109,9 +60,9 @@ public class BigTileHandler : MonoBehaviour {
 
         if (currentAxis == Axis.x)
         {
-            foreach (List<BigTile> column in bigMap)
+            foreach (List<Tile> column in bigMap)
             {
-                BigTile bigTile = column[y];
+                Tile bigTile = column[y];
 
                 if (bigTile != null)
                 {
@@ -121,7 +72,7 @@ public class BigTileHandler : MonoBehaviour {
         }
         else
         {
-            foreach (BigTile bigTile in bigMap[x])
+            foreach (Tile bigTile in bigMap[x])
             {
                 if (bigTile != null)
                 {
@@ -133,7 +84,7 @@ public class BigTileHandler : MonoBehaviour {
         gc.guiC.uiDisabled = false;
     }
 
-    void ActivateBigTile(BigTile bigTile, int pos)
+    void ActivateBigTile(Tile bigTile, int pos)
     {
         bigTile.SetActive(true);
         bigTile.transform.position = new Vector3(transform.position.x + pos * tileWidth, transform.position.y);
@@ -147,11 +98,11 @@ public class BigTileHandler : MonoBehaviour {
 
     private void Update()
     {
-        BigTile activeTile = null;
+        Tile activeTile = null;
 
-        foreach (List<BigTile> column in bigMap)
+        foreach (List<Tile> column in bigMap)
         {
-            foreach (BigTile row in column)
+            foreach (Tile row in column)
             {
                 if (row != null
                     && row.activeSelf

@@ -12,14 +12,23 @@ public class InventoryButton : MonoBehaviour {
 
     private Item item
     {
-        get { return gc.inventory[slot][0]; }
+        get {
+            if (gc.inventory[slot] != null)
+            {
+                return gc.inventory[slot][0];
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 
     private void Start()
     {
         gc = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
 
-        gc.RaiseInvEvent += Set;
+        gc.RaiseInvEvent += SetItem;
 
         icon = transform.Find("Icon").GetComponent<Image>();
         text = transform.Find("Text").GetComponent<Text>();
@@ -35,8 +44,8 @@ public class InventoryButton : MonoBehaviour {
             {
                 if (gc.currentItem == null)
                 {
-                    gc.currentBattle.SetCurrentAttackPreview(item);
-                    gc.player.SetAttack(item.Func, "Throw");
+                    gc.battle.SetCurrentAttackPreview(item);
+                    gc.player.SetAttack(item.Func, "");
 
                     if (!gc.cheatInfiniteItems)
                     {
@@ -45,7 +54,7 @@ public class InventoryButton : MonoBehaviour {
                 }
                 else if (gc.currentItem.name == item.name)
                 {
-                    gc.currentBattle.NullCurrentAttackPreview();
+                    gc.battle.NullCurrentAttackPreview();
                     if (!gc.cheatInfiniteItems)
                     {
                         gc.GiveItem(slot, item);
@@ -57,13 +66,13 @@ public class InventoryButton : MonoBehaviour {
                 if (gc.currentItem != null)
                 {
                     gc.GiveItem(slot, gc.currentItem);
-                    gc.currentBattle.NullCurrentAttackPreview();
+                    gc.battle.NullCurrentAttackPreview();
                 }
             }
         }
     }
 
-    public void Set()
+    public void SetItem()
     {
         if (gc.inventory[slot] != null)
         {

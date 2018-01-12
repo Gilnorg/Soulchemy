@@ -11,6 +11,22 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1747215776336098}
   m_IsPrefabParent: 1
+--- !u!1 &1400376218605572
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4775385127005006}
+  - component: {fileID: 212007981195255848}
+  m_Layer: 0
+  m_Name: Sprite
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1747215776336098
 GameObject:
   m_ObjectHideFlags: 0
@@ -19,7 +35,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4351928491723896}
-  - component: {fileID: 212297759700992144}
   - component: {fileID: 61412297745753624}
   - component: {fileID: 95611501647314620}
   - component: {fileID: 114716149813927052}
@@ -39,8 +54,22 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -1.72, y: 1.54, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
-  m_Children: []
+  m_Children:
+  - {fileID: 4775385127005006}
   m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4775385127005006
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1400376218605572}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4351928491723896}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &61412297745753624
@@ -87,17 +116,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackReticle: {fileID: 0}
   animator: {fileID: 0}
-  spRenderer: {fileID: 0}
+  spRenderer: {fileID: 212007981195255848}
   currentTarget: {fileID: 0}
   currentAnim: 
   gone: 0
   dead: 0
-  blocking: 0
+  blockingLeft: 0
+  blockingRight: 0
   lockedLeft: 0
   lockedRight: 0
   id: 0
   alliance: 0
   loc: 0
+  healthBarPos: 2.6
   hp:
     trueMax: 15
     max: 0
@@ -110,7 +141,6 @@ MonoBehaviour:
     trueMax: 10
     max: 0
     current: 0
-  healthBarPos: 2.2
   atk:
     max: 5
     current: 0
@@ -135,12 +165,12 @@ MonoBehaviour:
   resSilver:
     max: 0
     current: 0
---- !u!212 &212297759700992144
+--- !u!212 &212007981195255848
 SpriteRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1747215776336098}
+  m_GameObject: {fileID: 1400376218605572}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0

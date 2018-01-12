@@ -26,7 +26,7 @@ public class SlimeController : AIController {
         //move to target
         MoveToEntity(currentTarget);
 
-        if (IsAdjacent(currentTarget))
+        if (IsInRange(currentTarget))
         {
             SetAttack(PickRandomAttack(BasicAttack, SlimeAttack));
         }
@@ -54,6 +54,6 @@ public class SlimeController : AIController {
 
     public void SlimeAttackFunc()
     {
-        gc.currentBattle.SplashAttack(loc, atk.current, 1, 1);
+        gc.battle.SplashAttack(loc, atk.current, 1, 1);
     }
 }

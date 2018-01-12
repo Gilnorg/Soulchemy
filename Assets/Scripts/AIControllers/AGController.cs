@@ -6,7 +6,12 @@ public class AGController : AIController {
 
     public AttackContainer SplashHeal, SummonTotem;
 
+    public GameObject totem;
+
     public float minHPPercent;
+    public int healStrength;
+
+    private Entity healTarget;
 
 	new void Awake ()
     {
@@ -23,55 +28,107 @@ public class AGController : AIController {
 
     public override void Move()
     {
-        bool canHeal = AdjacentHPPercent() <= minHPPercent;
+        List<AttackContainer> potentialAttacks = new List<AttackContainer> ();
+        
+        currentTarget = CheckPriorities();
 
-        bool canTotem = gc.currentBattle.UnitCount < 6;
+        healTarget = CheckHPPercentPairs();
 
-        List<AttackContainer> potentialAttacks = new List<AttackContainer> { BasicAttack };
+        if (IsInRange(currentTarget, mov.current))
+        {
+            potentialAttacks.Add(BasicAttack);
+        }
 
-        if (canHeal) potentialAttacks.Add(SplashHeal);
-        if (canTotem) potentialAttacks.Add(SummonTotem);
+        if (healTarget != null)
+        {
+            potentialAttacks.Add(SplashHeal);
+        }
+
+        if (gc.battle.UnitCount < 6 && loc != 0 && loc != gc.battle.UnitCount - 1)
+        {
+            potentialAttacks.Add(SummonTotem);
+        }
 
         SetAttack(PickRandomAttack(potentialAttacks));
 
-        currentTarget = CheckPriorities();
+        if (currentAttack == BasicAttack.func)
+        {
+            MoveToEntity(currentTarget);
+            if (!IsInRange(currentTarget))
+            {
+                Advance();
+                return;
+            }
 
-        FaceTarget(currentTarget);
-        FaceMe(currentTarget);
+            FaceTarget(currentTarget);
+            FaceMe(currentTarget);
+        }
+        else if (currentAttack == SplashHeal.func)
+        {
+            currentTarget = healTarget;
+
+            MoveToEntity(currentTarget);
+            if (!IsInRange(currentTarget))
+            {
+                Advance();
+                return;
+            }
+
+            FaceMe(currentTarget);
+            FaceMe(gc.battle.arena[loc + 1]);
+        }
 
         PlayAttack();
     }
 
-    float AdjacentHPPercent()
+    Entity CheckHPPercentPairs()
     {
-        float percent = 0, checkNum = 0;
+        List<Entity> potentialPairs = new List<Entity>();
 
-        if (loc > 0)
+        for (int i = Mathf.Clamp(loc - mov.current, 1, gc.battle.UnitCount); i < Mathf.Clamp(loc + mov.current, 1, gc.battle.UnitCount - 1); i++)
         {
-            var hp = gc.currentBattle.arena[loc - 1].hp;
+            Entity unit1 = gc.battle.arena[i], unit2 = gc.battle.arena[i - 1];
 
-            percent += hp.current / hp.max;
-            checkNum++;
+            float percent = 0;
+
+            percent += unit1.hp.current / unit1.hp.max;
+            percent += unit2.hp.current / unit2.hp.max;
+            percent /= 2;
+
+            if (percent <= minHPPercent)
+            {
+                potentialPairs.Add(gc.battle.arena[i - 1]);
+            }
         }
 
-        if (loc < gc.currentBattle.UnitCount - 1)
+        if (potentialPairs.Count > 0)
         {
-            var hp = gc.currentBattle.arena[loc + 1].hp;
-
-            percent += hp.current / hp.max;
-            checkNum++;
+            return potentialPairs[Random.Range(0, potentialPairs.Count - 1)];
         }
-
-        return percent / checkNum;
+        else
+        {
+            return null;
+        }
     }
 
     public void SummonTotemFunc()
     {
-        print("TODO");
+        float chance = Random.Range(0f, 1f);
+
+        if (chance < 0.5f)
+        {
+            gc.battle.SpawnEntity(totem, loc);
+            spRenderer.flipX = true;
+        }
+        else
+        {
+            gc.battle.SpawnEntity(totem, loc + 1);
+            spRenderer.flipX = false;
+        }
     }
 
     public void SplashHealFunc()
     {
-        print("TODO");
+        gc.battle.SplashHeal(loc, healStrength);
     }
 }

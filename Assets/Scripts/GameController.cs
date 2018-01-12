@@ -27,7 +27,7 @@ public class GameController : MonoBehaviour
 
     public float center;
 
-    public GameObject attackReticle, noAttackReticle,
+    public GameObject attackReticle,
         defaultVisEffect, blackOut;
 
     public GameObject healthBar, movPip;
@@ -48,11 +48,11 @@ public class GameController : MonoBehaviour
 
     public Map currentMap;
 
-    public Battle currentBattle;
+    public Battle battle;
     public PlayerAttack currentPlayerAttack
     {
-        get { return currentBattle.currentPlayerAttack; }
-        set { currentBattle.currentPlayerAttack = value; }
+        get { return battle.currentPlayerAttack; }
+        set { battle.currentPlayerAttack = value; }
     }
 
     public List<BattleType> battles;
@@ -107,20 +107,20 @@ public class GameController : MonoBehaviour
     {
         if (battle >= 0)
         {
-            if (!currentBattle.set)
+            if (!this.battle.set)
             {
-                currentBattle = new Battle(battles[battle].enemies);
+                this.battle = new Battle(battles[battle].enemies);
             }
 
             yield return 0;
 
-            currentBattle.Trigger();
+            this.battle.Trigger();
         }
     }
 
     public void SetCurrentAttack(PlayerAttack newAttack)
     {
-        currentBattle.currentPlayerAttack = newAttack;
+        battle.currentPlayerAttack = newAttack;
     }
 
     //Inv Management

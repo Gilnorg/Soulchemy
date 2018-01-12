@@ -53,7 +53,7 @@ public class Item {
         {
             base.Func();
 
-            gc.currentBattle.SplashAttack(target.loc, dmg, range, deadRange);
+            gc.battle.SplashAttack(target.loc, dmg, range, deadRange);
         }
     }
 

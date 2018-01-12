@@ -145,11 +145,6 @@ public class Map {
         return null;
     }
 
-    public Tile.SetPiece GetSetPiece(int index)
-    {
-        return GetTile().things[index];
-    }
-
 }
 
 [System.Serializable]

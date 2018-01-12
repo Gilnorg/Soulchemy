@@ -18,7 +18,7 @@ public class PCController : Entity {
     {
         startPos = loc;
 
-        gc.currentBattle.state = BattleState.playerTurn;
+        gc.battle.state = BattleState.playerTurn;
     }
 
     public override void Hurt(int dmg, string dmgType, Entity attacker = null)
@@ -28,14 +28,14 @@ public class PCController : Entity {
             base.Hurt(dmg, dmgType, attacker);
             if (hp.current <= 0)
             {
-                gc.currentBattle.Lose();
+                gc.battle.Lose();
             }
         }
     }
 
     public void PlayAttack(Entity newTarget)
     {
-        gc.currentBattle.state = BattleState.enemyTurn;
+        gc.battle.state = BattleState.enemyTurn;
 
         currentTarget = newTarget;
 
@@ -50,16 +50,16 @@ public class PCController : Entity {
         if (currentAttack != HurtTarget)
         {
             SetAttack(HurtTarget, "Attack");
-            gc.currentBattle.currentPlayerAttack = new PlayerAttack(true);
+            gc.battle.currentPlayerAttack = new PlayerAttack(true);
 
-            gc.currentBattle.AttackPreview(this);
+            gc.battle.AttackPreview(this);
         }
         else
         {
             NullAttack();
 
-            gc.currentBattle.NullCurrentAttackPreview();
-            gc.currentBattle.AttackPreview();
+            gc.battle.NullCurrentAttackPreview();
+            gc.battle.AttackPreview();
         }
     }
 
@@ -72,8 +72,8 @@ public class PCController : Entity {
             mov.current += 2;
         }
 
-        gc.currentBattle.MovLeft();
-        gc.currentBattle.AttackPreview(this);
+        gc.battle.MovLeft();
+        gc.battle.AttackPreview(this);
 
         spRenderer.flipX = true;
     }
@@ -85,8 +85,8 @@ public class PCController : Entity {
             mov.current += 2;
         }
 
-        gc.currentBattle.MovRight();
-        gc.currentBattle.AttackPreview(this);
+        gc.battle.MovRight();
+        gc.battle.AttackPreview(this);
 
         spRenderer.flipX = false;
     }

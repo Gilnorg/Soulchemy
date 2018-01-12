@@ -6,44 +6,33 @@ public class Tile
 {
     protected GameController gc;
 
+    public GameObject gameObject;
+    public Transform transform;
+
     public TileType type = TileType.none;
 
     public Sprite sprite;
 
     public bool triggered;
 
-    public SetPiece[] things = new SetPiece[6];
+    public SetPiece[] setPieces = new SetPiece[6];
 
-    public Tile()
+    public Tile(GameObject newGameObject = null)
     {
         gc = GameController.main;
 
-        //things[0] = new SetPiece(gc.setPiecePrefs[0]);
-        things[1] = new SetPiece(gc.setPiecePrefs[0]);
-        //things[2] = new SetPiece(gc.setPiecePrefs[0]);
-        things[3] = new SetPiece(gc.setPiecePrefs[0]);
-        //things[4] = new SetPiece(gc.setPiecePrefs[0]);
-        things[5] = new SetPiece(gc.setPiecePrefs[0]);
+        gameObject = Object.Instantiate(newGameObject, gc.bigTileHandler.transform);
+        if (gameObject != null)
+        {
+            transform = gameObject.transform;
+        }
+
+        gameObject.SetActive(false);
     }
 
     public virtual void Func()
     {
         triggered = true;
-    }
-
-    public class SetPiece
-    {
-        public GameObject gameObject;
-
-        public SetPiece(GameObject newGM)
-        {
-            gameObject = newGM;
-        }
-
-        public virtual void Func(Entity target)
-        {
-            
-        }
     }
 
     public class Path : Tile

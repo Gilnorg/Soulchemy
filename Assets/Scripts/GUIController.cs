@@ -37,7 +37,7 @@ public class GUIController : MonoBehaviour {
         }
         else if (gc.state == GameState.inBattle)
         {
-            if (gc.currentBattle.state == BattleState.playerTurn)
+            if (gc.battle.state == BattleState.playerTurn)
             {
                 exploringArrows.SetActive(false);
                 playerFunctions.SetActive(true);

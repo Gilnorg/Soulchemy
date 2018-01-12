@@ -54,7 +54,7 @@ public class Battle {
     //CONSTRUCTORS
     public Battle()
     {
-        
+        set = false;
     }
 
     public Battle(List<GameObject> enemies)
@@ -142,10 +142,10 @@ public class Battle {
 
                 CurrentEntity.mov.current = Mathf.Clamp(CurrentEntity.mov.current + CurrentEntity.movRegen.current, 0, CurrentEntity.mov.max);
 
-                if (gc.currentMap.GetSetPiece(CurrentEntity.LocNormal) != null)
+                /*if (gc.currentMap.GetSetPiece(CurrentEntity.LocNormal) != null)
                 {
                     gc.currentMap.GetSetPiece(CurrentEntity.LocNormal).Func(CurrentEntity);
-                }
+                }*/
             }
 
             //start new turn
@@ -154,7 +154,10 @@ public class Battle {
 
             ApplyStatusEffects(true);
 
-            CurrentEntity.animator.Play("Bounce");
+            if (!CurrentEntity.PlayAnim("Bounce"))
+            {
+                Advance();
+            }
         }
         else //if all enemies have gone, restart
         {
@@ -292,9 +295,11 @@ public class Battle {
 
     private bool IsEntityBlocked(Entity checker, Entity target)
     {
-        return  ( checker.loc < target.loc && target.blockingLeft )
-            ||
-                ( checker.loc > target.loc && target.blockingRight );
+        return  !(checker.alliance == target.alliance) && (
+                ( checker.loc < target.loc && target.blockingLeft )
+                ||
+                ( checker.loc > target.loc && target.blockingRight )
+            );
     }
 
     private void MovForwards(Entity entity, int dist)
@@ -431,7 +436,7 @@ public class Battle {
 
 
     //Splash Attack
-    public void SplashAttack(int target, int dmg, int range = 1, int deadRange = 0)
+    public void SplashAttack(int target, int dmg, int range = 1, int deadRange = 0, string type = "normal")
     {
         int LBounds = Mathf.Clamp(target - range, 0, UnitCount - 1);
         int UBounds = Mathf.Clamp(target + range, 0, UnitCount - 1);
@@ -440,7 +445,21 @@ public class Battle {
         {
             if (i <= target - deadRange || i >= target + deadRange)
             {
-                arena[i].Hurt(dmg);
+                arena[i].Hurt(dmg, type);
+            }
+        }
+    }
+
+    public void SplashHeal(int target, int heal, int range = 1, int deadRange = 0, string type = "normal")
+    {
+        int LBounds = Mathf.Clamp(target - range, 0, UnitCount - 1);
+        int UBounds = Mathf.Clamp(target + range, 0, UnitCount - 1);
+
+        for (int i = LBounds; i <= UBounds; i++)
+        {
+            if (i <= target - deadRange || i >= target + deadRange)
+            {
+                arena[i].Heal(heal, type);
             }
         }
     }
@@ -462,6 +481,36 @@ public class Battle {
                 Object.Instantiate(statusEffect.visEffect, arena[i].transform);
             }
         }
+    }
+
+    //Spawn Entity
+
+    public void SpawnEntity(GameObject entity, int loc = 6)
+    {
+        gc.StartCoroutine(gc.battle.SpawnEntityCoroutine(entity, loc));
+    }
+    private IEnumerator SpawnEntityCoroutine(GameObject entity, int loc)
+    {
+        if (UnitCount < 6)
+        {
+            var newEntity = Object.Instantiate(entity, gc.battleUnits.transform);
+
+            yield return 0;
+
+            if (loc < UnitCount)
+            {
+                arena.Insert(loc, newEntity.GetComponent<Entity>());
+
+                if (loc <= currentTurn) currentTurn++;
+            }
+            else
+            {
+                arena.Add(newEntity.GetComponent<Entity>());
+            }
+
+            SetLocations();
+        }
+        else yield return 0;
     }
 
 }
